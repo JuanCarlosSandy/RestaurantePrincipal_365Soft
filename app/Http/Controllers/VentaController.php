@@ -3689,7 +3689,7 @@ public function imprimirResivoRollo($id)
         $pdfPath = public_path('docs/facturaRollo.pdf');
         $xmlPath = public_path("docs/facturaxml.xml");
     
-        \Mail::to($correo)->send(new \App\Mail\FacturaElectrónica($xmlPath, $pdfPath));
+        //\Mail::to($correo)->send(new \App\Mail\FacturaElectrónica($xmlPath, $pdfPath));
     
         return response()->json(['url' => url('docs/facturaRollo.pdf')]);
     }
