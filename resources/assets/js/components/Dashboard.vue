@@ -105,7 +105,6 @@
 
                     <div class="col-md-6">
                         <productosporvencerse></productosporvencerse>
-
                     </div>
                 </div>
 

@@ -284,66 +284,39 @@ class InventarioController extends Controller
     $buscar = $request->buscar;
     $criterio = $request->criterio;
 
-    if ($buscar == '') {
-        $inventarios = Inventario::join('almacens', 'inventarios.idalmacen', '=', 'almacens.id')
-            ->join('articulos', 'inventarios.idarticulo', '=', 'articulos.id')
-            ->join('proveedores', 'articulos.idproveedor', '=', 'proveedores.id')
-            ->join('personas', 'proveedores.id', '=', 'personas.id')
-            ->select(
-                'articulos.id as articulo_id',
-                'articulos.codigo',
-                'articulos.nombre as nombre_producto',
-                'articulos.stockmin',
-                'articulos.unidad_paquete',
-                'almacens.nombre_almacen',
-                'almacens.ubicacion',
-                'personas.nombre as nombre_proveedor',
-                DB::raw('SUM(inventarios.saldo_stock) as total_stock') // Sumar cantidades
-            )
-            ->groupBy(
-                'articulos.id',
-                'articulos.codigo',
-                'articulos.nombre',
-                'articulos.stockmin',
-                'articulos.unidad_paquete',
-                'almacens.nombre_almacen',
-                'almacens.ubicacion',
-                'personas.nombre'
-            )
-            ->havingRaw('SUM(inventarios.saldo_stock) < articulos.stockmin') // Comparar con stock mínimo
-            ->orderBy('articulos.nombre', 'asc') // Ordenar por nombre del artículo
-            ->paginate(6);
-    } else {
-        $inventarios = Inventario::join('almacens', 'inventarios.idalmacen', '=', 'almacens.id')
-            ->join('articulos', 'inventarios.idarticulo', '=', 'articulos.id')
-            ->join('proveedores', 'articulos.idproveedor', '=', 'proveedores.id')
-            ->join('personas', 'proveedores.id', '=', 'personas.id')
-            ->select(
-                'articulos.id as articulo_id',
-                'articulos.codigo',
-                'articulos.nombre as nombre_producto',
-                'articulos.stockmin',
-                'articulos.unidad_paquete',
-                'almacens.nombre_almacen',
-                'almacens.ubicacion',
-                'personas.nombre as nombre_proveedor',
-                DB::raw('SUM(inventarios.saldo_stock) as total_stock') // Sumar cantidades
-            )
-            ->groupBy(
-                'articulos.id',
-                'articulos.codigo',
-                'articulos.nombre',
-                'articulos.stockmin',
-                'articulos.unidad_paquete',
-                'almacens.nombre_almacen',
-                'almacens.ubicacion',
-                'personas.nombre'
-            )
-            ->havingRaw('SUM(inventarios.saldo_stock) < articulos.stockmin') // Comparar con stock mínimo
-            ->where('articulos.' . $criterio, 'like', '%' . $buscar . '%')
-            ->orderBy('articulos.nombre', 'asc') // Ordenar por nombre del artículo
-            ->paginate(6);
+    $query = Inventario::join('almacens', 'inventarios.idalmacen', '=', 'almacens.id')
+        ->join('articulos', 'inventarios.idarticulo', '=', 'articulos.id')
+        ->join('proveedores', 'articulos.idproveedor', '=', 'proveedores.id')
+        ->join('personas', 'proveedores.id', '=', 'personas.id')
+        ->select(
+            'articulos.id as articulo_id',
+            'articulos.codigo',
+            'articulos.nombre as nombre_producto',
+            'articulos.stockmin',
+            'articulos.unidad_paquete',
+            'almacens.nombre_almacen',
+            'almacens.ubicacion',
+            'personas.nombre as nombre_proveedor',
+            DB::raw('SUM(inventarios.saldo_stock) as total_stock')
+        )
+        ->groupBy(
+            'articulos.id',
+            'articulos.codigo',
+            'articulos.nombre',
+            'articulos.stockmin',
+            'articulos.unidad_paquete',
+            'almacens.nombre_almacen',
+            'almacens.ubicacion',
+            'personas.nombre'
+        )
+        ->havingRaw('SUM(inventarios.saldo_stock) <= articulos.stockmin') // <-- Aquí se hizo el cambio
+        ->orderBy('articulos.nombre', 'asc');
+
+    if ($buscar != '') {
+        $query->where('articulos.' . $criterio, 'like', '%' . $buscar . '%');
     }
+
+    $inventarios = $query->paginate(6);
 
     return [
         'pagination' => [
@@ -357,6 +330,7 @@ class InventarioController extends Controller
         'inventarios' => $inventarios
     ];
 }
+
 
 
     public function listarReporteBajoStockExcel()

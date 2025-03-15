@@ -1035,6 +1035,27 @@ export default {
                 return;
             }
 
+            if (this.documento == ''){
+                this.$toast.add({
+                    severity:'error',
+                    summary: 'Sin documento del Cliente',
+                    detail: `Documento del Cliente necesario`,
+                    life: 2000});
+
+                return;
+            }
+            if (this.tipo_entrega == 'Afuera' || this.tipo_entrega == 'Patio'){
+                if (this.mesaSeleccionada == null) {
+                    this.$toast.add({
+                        severity:'error',
+                        summary: 'Sin Numero de mesa',
+                        detail: `Ingrese el número de mesa`,
+                        life: 2000});
+
+                    return;
+                }
+            }
+
             if (this.tipo_entrega == 'Entregas') {
                 if (this.telefono_delivery == '') {
                     this.$toast.add({
@@ -1334,7 +1355,11 @@ export default {
                         this.cliente = response.data.cliente.nombre;
                         this.email = response.data.cliente.email;
                     } else {
-                        alert('Cliente no encontrado');
+                        swal(
+                            'CLIENTE NO ENCONTRADO',
+                            'Por favor, verifique los datos ingresados',
+                            'error'
+                        )
                         this.cliente = '';
                         this.email = 'trotamundos.rockpopbar.cba@gmail.com';
                     }
@@ -1805,6 +1830,7 @@ export default {
             });
 
             if (!me.cliente) me.errorMostrarMsjVenta.push("Ingrese el Nombre de un Cliente");
+            if (!me.documento) me.errorMostrarMsjVenta.push("Ingrese el Documento del Cliente");
             //if (me.tipo_comprobante == 0) me.errorMostrarMsjVenta.push("Seleccione el Comprobante");
             //if (!me.impuesto) me.errorMostrarMsjVenta.push("Ingrese el impuesto de compra");
             if (me.arrayDetalle.length <= 0) me.errorMostrarMsjVenta.push("Ingrese detalles");
@@ -2109,10 +2135,10 @@ export default {
                     const response = await axios.post('/factura/verificarNit/' + numeroDocumento);
                     if (response.data === 'NIT ACTIVO') {
                         me.codigoExcepcion = 0;
-                        //alert("NIT VÁLIDO.");
+                        alert("NIT VÁLIDO.");
                     } else {
                         me.codigoExcepcion = 1;
-                        //alert("NIT INVÁLIDO.");
+                        alert("NIT INVÁLIDO.");
                     }
                 }else{
                     me.codigoExcepcion = 0;

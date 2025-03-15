@@ -108,19 +108,24 @@
                             <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <label for="nombre" class="font-weight-bold">Nombre del cliente <span
-                                            class="text-danger">*</span></label>
+                                    
+                                            <label class="form-control-label" for="nombre"><strong>Nombre del cliente<span class="obligatorio">(Obligatorio)</span></strong></label>    
+
                                             <input type="text" v-model="nombre" class="form-control" id="nombre" placeholder="Ej. Juan Pérez">                                        
                                     </div>
+
                                     <div class="col-md-6">
+                                        <label class="form-control-label" for="email"><strong>Correo Electronico</strong></label>    
+                                            <input type="text" v-model="email" class="form-control" id="email" placeholder="Ej. ejemplo@dominio.com">                                        
+                                    </div>
+                                    <!--<div class="col-md-6">
                                         <label for="direccion" class="font-weight-bold">Dirección</label>
                                             <input type="text" v-model="direccion" class="form-control" id="direccion" placeholder="Ej. Calle Principal #123, Ciudad">                                        
-                                    </div>
+                                    </div>-->
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <label for="tipo_documento" class="font-weight-bold">Tipo de documento <span
-                                            class="text-danger">*</span></label>
+                                        <label class="form-control-label" for="tipo_documento"><strong>Tipo de Documento<span class="obligatorio">(Obligatorio)</span></strong></label>    
                                             <div>
                                                 <select class="form-control" v-model="tipo_documento">
                                                     <option value="" disabled>Selecciona una tipo de documento</option>
@@ -133,18 +138,8 @@
                                             </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="num_documento" class="font-weight-bold">N° Documento</label>
+                                        <label class="form-control-label" for="num_documento"><strong>N° Documento<span class="obligatorio">(Obligatorio)</span></strong></label>    
                                             <input type="text" v-model="num_documento" class="form-control" id="num_documento" placeholder="Ej. 12345678">                                        
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-md-6">
-                                        <label for="telefono" class="font-weight-bold">Teléfono</label>
-                                            <input type="text" v-model="telefono" class="form-control" id="telefono" placeholder="Ej. 7XXXXXX">                                        
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="email" class="font-weight-bold">Email</label>
-                                            <input type="text" v-model="email" class="form-control" id="email" placeholder="Ej. ejemplo@dominio.com">                                        
                                     </div>
                                 </div>
                                 <div v-show="errorPersona" class="form-group row div-error">
@@ -318,6 +313,9 @@
                 this.errorMostrarMsjPersona =[];
 
                 if (!this.nombre) this.errorMostrarMsjPersona.push("El nombre de la persona no puede estar vacío.");
+                if (!this.num_documento) this.errorMostrarMsjPersona.push("El número de documento de la persona no puede estar vacío.");
+                if (!this.tipo_documento) this.errorMostrarMsjPersona.push("El tipo del documento de la persona no puede estar vacío.");
+
 
                 if (this.errorMostrarMsjPersona.length) this.errorPersona = 1;
 
@@ -519,5 +517,8 @@
 
     .table-striped tbody tr:nth-of-type(odd) {
     background-color: rgba(0, 0, 0, 0.05);
+    }
+    .obligatorio {
+    color: red;
     }
 </style>

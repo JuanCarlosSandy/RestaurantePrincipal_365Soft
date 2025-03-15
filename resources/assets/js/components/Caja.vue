@@ -10,6 +10,7 @@
         >
             <Column field="fechaApertura" header="Fecha Apertura"></Column>
             <Column field="fechaCierre" header="Fecha Cierre"></Column>
+            <Column field="usuario" header="Usuario"></Column>
             <Column field="saldoInicial" header="Saldo Inicial"></Column>
             <Column field="ventasContado" header="Ventas Efectivo"></Column>
             <Column field="ventasQR" header="Ventas QR"></Column>

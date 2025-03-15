@@ -18,7 +18,6 @@
                         <th>Nombre de articulo</th>
                         <th>Proveedor</th>
                         <th>Almacen</th>
-
                         <th>En Stock</th>
                         <th></th>
                     </tr>

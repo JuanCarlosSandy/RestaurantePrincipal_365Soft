@@ -10,30 +10,42 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Illuminate\Support\Facades\DB;
 
 class ProductosBajoStockExport implements FromQuery, WithHeadings, WithMapping, WithEvents, WithCustomStartCell
 {
     use Exportable;
 
     public function query()
-    {
-        return Inventario::join('articulos', 'inventarios.idarticulo', '=', 'articulos.id')
-            ->join('almacens', 'inventarios.idalmacen', '=', 'almacens.id')
-            ->join('proveedores', 'articulos.idproveedor', '=', 'proveedores.id')
-            ->join('personas', 'proveedores.id', '=', 'personas.id')
-            ->select(
-                'articulos.codigo',
-                'articulos.nombre as nombre_producto',
-                'articulos.unidad_paquete',
-                'inventarios.saldo_stock',
-                'articulos.stockmin',
-                'almacens.nombre_almacen',
-                'personas.nombre as nombre_proveedor',
-            )
-            ->whereRaw('articulos.stockmin > inventarios.saldo_stock')
-            ->orderBy('inventarios.id', 'desc');
-    }
+{
+    return Inventario::join('articulos', 'inventarios.idarticulo', '=', 'articulos.id')
+        ->join('almacens', 'inventarios.idalmacen', '=', 'almacens.id')
+        ->join('proveedores', 'articulos.idproveedor', '=', 'proveedores.id')
+        ->join('personas', 'proveedores.id', '=', 'personas.id')
+        ->select(
+            'articulos.id as id_articulo', // Agregar el ID del artículo para una mejor agrupación
+            'articulos.codigo',
+            'articulos.nombre as nombre_producto',
+            'articulos.unidad_paquete',
+            DB::raw('SUM(inventarios.saldo_stock) as saldo_total'),
+            'articulos.stockmin',
+            'almacens.nombre_almacen',
+            'personas.nombre as nombre_proveedor'
+        )
+        ->whereRaw('articulos.stockmin > inventarios.saldo_stock')
+        ->groupBy(
+            'articulos.id', // Agregar el ID del artículo
+            'articulos.codigo',
+            'articulos.nombre',
+            'articulos.unidad_paquete',
+            'articulos.stockmin',
+            'almacens.nombre_almacen',
+            'personas.nombre'
+        )
+        ->orderBy('saldo_total', 'asc'); // Ordenado por el saldo total en ascendente
+}
 
+    
     public function headings(): array
     {
         return [
@@ -53,7 +65,7 @@ class ProductosBajoStockExport implements FromQuery, WithHeadings, WithMapping, 
             $row->codigo,
             $row->nombre_producto,
             $row->unidad_paquete,
-            $row->saldo_stock,
+            $row->saldo_total,
             $row->stockmin,
             $row->nombre_almacen,
             $row->nombre_proveedor,

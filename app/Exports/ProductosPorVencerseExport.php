@@ -17,8 +17,8 @@ class ProductosPorVencerseExport implements FromQuery, WithHeadings, WithMapping
     use Exportable;
 
     public function query()
-    {
-        return Inventario::join('articulos', 'inventarios.idarticulo', '=', 'articulos.id')
+{
+    return Inventario::join('articulos', 'inventarios.idarticulo', '=', 'articulos.id')
         ->join('almacens', 'inventarios.idalmacen', '=', 'almacens.id')
         ->join('proveedores', 'articulos.idproveedor', '=', 'proveedores.id')
         ->join('personas', 'proveedores.id', '=', 'personas.id')
@@ -27,14 +27,19 @@ class ProductosPorVencerseExport implements FromQuery, WithHeadings, WithMapping
             'articulos.nombre', 
             'inventarios.saldo_stock',
             'almacens.nombre_almacen',
-            DB::raw('DATEDIFF(inventarios.fecha_vencimiento, NOW()) AS dias_restantes'), 
+            DB::raw("CASE 
+                        WHEN DATEDIFF(inventarios.fecha_vencimiento, NOW()) < 0 
+                        THEN 'Vencido' 
+                        ELSE DATEDIFF(inventarios.fecha_vencimiento, NOW()) 
+                     END AS dias_restantes"), 
             'inventarios.fecha_vencimiento',
-            'personas.nombre as nombre_proveedor',
+            'personas.nombre as nombre_proveedor'
         )
-        ->whereRaw('DATEDIFF(inventarios.fecha_vencimiento, NOW()) < 30')
-        ->whereRaw('DATEDIFF(inventarios.fecha_vencimiento, NOW()) > 1')
+        ->whereRaw('DATEDIFF(inventarios.fecha_vencimiento, NOW()) < 30 OR DATEDIFF(inventarios.fecha_vencimiento, NOW()) < 0')
         ->orderBy('inventarios.id', 'desc');
-    }
+}
+
+    
 
     public function headings(): array
     {

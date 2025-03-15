@@ -28,7 +28,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <ul class="nav navbar-nav ml-auto mr-3">
-            <notification :notifications="notifications"></notification>
+            <!--notification :notifications="notifications"></notification>-->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     <img src="img/trotamundo1.jpg" class="img-avatar" alt="Fotografia">

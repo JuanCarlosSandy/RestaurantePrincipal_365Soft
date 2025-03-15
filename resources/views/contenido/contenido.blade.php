@@ -204,7 +204,7 @@
             </template>
             
             <template v-if="menu==49">
-                <reporteventastabla></reporteventastabla>
+                <listaventa2></listaventa2>
             </template>
             <template v-if="menu==16">
                 <caja></caja>
