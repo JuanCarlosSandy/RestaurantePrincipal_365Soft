@@ -37,8 +37,7 @@ class ProductExport implements FromQuery, WithHeadings, WithMapping, WithEvents,
             'Nombre',
             'Categoria',
             'Precio Venta',
-            'Stock',
-            'Descripcion',
+            'Stock Minimo',
             'Condicion',
         ];
     }
@@ -51,7 +50,6 @@ class ProductExport implements FromQuery, WithHeadings, WithMapping, WithEvents,
             $row->nombre_categoria,
             $row->precio_venta,
             $row->stockmin,
-            $row->descripcion,
             $row->estado,
         ];
     }
@@ -66,7 +64,7 @@ class ProductExport implements FromQuery, WithHeadings, WithMapping, WithEvents,
                 $sheet->setCellValue('A1', 'REPORTE DE PRODUCTOS DE INVENTARIO');
                 
                 // Unir las celdas de A1 a G1 para el título
-                $sheet->mergeCells('A1:G1');
+                $sheet->mergeCells('A1:F1');
 
                 // Aplicar estilo al título
                 $sheet->getStyle('A1')->applyFromArray([
@@ -80,7 +78,7 @@ class ProductExport implements FromQuery, WithHeadings, WithMapping, WithEvents,
                 ]);
 
                 // Aplicar estilo a la segunda fila (encabezados de columnas)
-                $sheet->getStyle('A2:G2')->applyFromArray([
+                $sheet->getStyle('A2:F2')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'size' => 12,
@@ -94,7 +92,7 @@ class ProductExport implements FromQuery, WithHeadings, WithMapping, WithEvents,
                 ]);
 
                 // Ajustar automáticamente el ancho de las columnas
-                foreach (range('A', 'G') as $columnID) {
+                foreach (range('A', 'F') as $columnID) {
                     $sheet->getColumnDimension($columnID)->setAutoSize(true);
                 }
             },

@@ -4,140 +4,11 @@
         <ol class="breadcrumb">
             <!--<li class="breadcrumb-item"><a href="/">Ventas</a></li>-->
         </ol>
-
-<!--<div class="card">
-    <Toolbar class="mb-4">
-        <template #start>
-            <Button label="New" icon="pi pi-plus" class="p-button-sm p-button-success mr-2" @click="abrirDialogMenu" />
-            <Button label="Delete" icon="pi pi-trash" class="p-button-sm p-button-danger"  />
-        </template>
-
-        <template #end>
-            <Button :label="exportar_label" icon="pi pi-upload" class="p-button-sm p-button-help" />
-        </template>
-    </Toolbar>
-
-    <DataTable ref="dt"
-        :value="arrayArticulo"
-        :selection.sync="selectedProducts"
-        dataKey="id"
-        :paginator="true"
-        :rows="10"
-        :filters="filters"
-        :rowsPerPageOptions="[5,10,25]"
-        responsiveLayout="stack"
-        :rowHover="true"
-        >
-
-        <template #header>
-            <div class="table-header ">
-                <h5>Cartilla de Menu</h5>
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search" />
-                    <InputText style="width: 13rem;" placeholder="Search..." class="p-inputtext-sm" v-model="filters['global'].value"/>
-                </span>
-            </div>
-        </template>
-
-        <Column selectionMode="multiple" :exportable="false"></Column>
-        <Column header="Imagen">
-            <template #body="slotProps">
-                <img :src="'/img/menu/' + slotProps.data.fotografia" alt="Product Image" class="product-image" />
-            </template>
-        </Column>
-        <Column field="codigo" header="Codigo" sortable :styles="{'min-width':'3.5rem'}"></Column>
-        <Column field="nombre" header="Nombre" sortable :styles="{'min-width':'8rem'}"></Column>
-        <Column field="descripcion" header="Descripcion" sortable :styles="{'min-width':'10rem'}"></Column>
-        <Column field="precio_venta" header="Precio" sortable :styles="{'min-width':'5rem'}">
-            <template #body="slotProps">
-                {{formatCurrency(slotProps.data.precio_venta)}}
-            </template>
-        </Column>
-        <Column field="nombre_categoria" header="Categoria" sortable :styles="{'min-width':'5rem'}"></Column>
-        <Column field="condicion" header="Estado" sortable :styles="{'min-width':'4rem'}">
-            <template #body="slotProps">
-                <Chip v-if="slotProps.data.condicion == 1" label="Activado" icon="pi pi-check" class="custom-chip" style="background-color: #22c55e; color: #ffffff;" />
-                <Chip v-else-if="slotProps.data.condicion == 0" label="Desactivado" icon="pi pi-times" class="custom-chip" style="background-color: #ef4444; color: #ffffff;"/>
-            </template>
-        </Column>
-        <Column header="Opciones" :exportable="false" :styles="{'min-width':'10rem'}">
-            <template #body="slotProps">
-                <Button icon="pi pi-pencil" class="p-button-sm p-button-warning mr-2" />
-                <Button icon="pi pi-lock" class="p-button-sm p-button-help" />
-            </template>
-        </Column>
-    </DataTable>
-</div>
-
-<Dialog
-    :visible.sync="nuevoMenuDialog"
-    :modal="true"
-    :closable="false"
-    :contentStyle="{overflow: 'visible'}"
-    position="right"
-    >
-    <template #header>
-        <div class="titulo-modal">
-            <i class="pi pi-file sidebar-icon"></i>
-            <h4 class="sidebar-title">Crear Menu</h4>
-        </div>
-    </template>
-
-    <div class="p-grid">
-        <div class="p-col-4">
-            <img :src="'/img/menu/' + menu.image" :alt="menu.image" class="product-image" v-if="menu.image" />
-            <img :src="'/img/menu/imagen-default.png'" alt="Imagen menu" class="product-image" v-else />
-        </div>
-
-        <div class="p-col-8">
-            <div class="p-grid p-fluid">
-                <div class="p-col-12 p-md-6">
-                    <label for="nombre">Nombre</label>
-                    <InputText id="nombre" v-model.trim="menu.name" required="true" :class="{'p-invalid': submitted && !menu.name, 'p-inputtext-sm': true}" />
-                    <small class="p-invalid" v-if="submitted && !menu.name">Name is required.</small>
-                </div>
-        
-                <div class="p-col-12 p-md-6">
-                    <label for="precio">Precio Venta</label>
-                    <InputNumber class="p-inputtext-sm" id="precio" v-model="menu.price" mode="currency" currency="BOB" locale="es-BO" />
-                </div>
-
-                <div class="field">
-                    <label for="categoria">Categoria</label>
-                    <Dropdown v-model="menu.categoria" id="categoria" :options="lista_categorias" optionLabel="name" placeholder="Categorias" />
-                </div>
-
-                <div class="p-col-12">
-                    <label for="descripcion">Descripcion</label>
-                    <Textarea id="descripcion" v-model="menu.descripcion" required="true" rows="2" :autoResize="true"/>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <template #footer >
-        <div class="contenedor-footer">
-            <div class="contenedor-button-footer">
-                <Button label="Cerrar" icon="pi pi-times" class="p-button-sm p-button-raised p-button-danger" @click="ocultarMenuDialog"/>
-            </div>
-            <div class="contenedor-button-footer">
-                <Button label="Guardar" icon="pi pi-check" class="p-button-sm p-button-raised p-button-success" />
-            </div>
-        </div>
-    </template>
-</Dialog>
--->
-
-
-
-
-
-
-
-
-        
+        <div class="container-fluid">
+        <!-- Ejemplo de tabla Listado -->
+        <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Cartilla de Menu
+                    <i class="fa fa-align-justify"></i> PLATOS DE MENÚ
                     <button type="button" @click="abrirModal('articulo', 'registrar'); listarPrecio()"
                         class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
@@ -150,11 +21,11 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterio">
+                                <!--<select class="form-control col-md-3" v-model="criterio">
                                     <option value="nombre">Nombre</option>
                                     <option value="descripcion">Descripción</option>
                                     <option value="codigo">Código</option>
-                                </select>
+                                </select>-->
                                 <input type="text" v-model="buscar" @keyup="listarArticulo(1, buscar, criterio)"
                                     class="form-control" placeholder="Texto a buscar">
                             </div>
@@ -235,10 +106,8 @@
                         </ul>
                     </nav>
                 </div>
-            <!-- Fin ejemplo de tabla Listado -->
-        <!-- MODAL LISTADO DE MARCAS -->
-
-        <!-- contenido del modal -->
+            </div>
+        </div>
 
         <!--Inicio del modal agregar/actualizar-->
         <div class="modal fade" tabindex="-1" :class="{ 'mostrar': modal }" role="dialog" aria-labelledby="myModalLabel"
@@ -298,19 +167,39 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-control-label" for="text-input"><strong>Descripción</strong></label>
                                         <input type="email" 
                                         v-model="descripcion" 
                                         class="form-control"
-                                        :class="{ 'border-red': descripcionVacio }" 
                                         @input="descripcionVacio = false"
                                         placeholder="Ingrese una descripción OPCIONAL">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
+                                        <label class="form-control-label" for="text-input">
+                                            <strong>Categoria<span class="obligatorio">(Obligatorio)</span></strong>
+                                        </label>
+                                        <div class="input-group w-100">  <!-- Asegura que el grupo ocupe todo el ancho -->
+                                            <input type="text" class="form-control w-100" disabled v-model="lineaseleccionada.nombre"
+                                                :class="{ 'border-red': lineaseleccionadaVacio }">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-primary" type="button" @click="abrirModal2('Categorías')">...</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+                        </div>
+                            
+                            
+                        </form>
+                        <div  class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
                                         <label class="form-control-label" for="text-input"><strong>Fotografia<span class="obligatorio">(Obligatorio)</span></strong></label>    
                                         <div class="input-group">
                                             <input type="file" @change="obtenerFotografia" class="form-control"
@@ -318,34 +207,15 @@
                                             @input="fotografiaVacio = false"
                                             placeholder="fotografia usuario" ref="fotografiaInput">                                           
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
+                                    </div>                                                                                            
+                            </div> 
+                            <div class="col-md-4">
                                     <div class="form-group">
                                         <figure>
                                             <img :src="imagen" width="60" height="60" alt="Foto articulo">
                                         </figure>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            
-                        </form>
-                        <div  class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-control-label" for="text-input"><strong>Categoria<span class="obligatorio">(Obligatorio)</span></strong></label>    
-                                    <div class="input-group">
-                                        <input type="text" disabled v-model="lineaseleccionada.nombre"
-                                        :class="{ 'border-red': lineaseleccionadaVacio }">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button" @click="abrirModal2('Categorías')">...</button>
-                                        </div>
-                                    </div>
-                                </div>   
-                                
-                               
-                            </div> 
 
                             <div v-show="errorArticulo" class="form-group row div-error">
                                     <div class="text-center text-error">

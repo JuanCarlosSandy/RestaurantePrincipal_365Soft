@@ -8,7 +8,7 @@
             <!-- Ejemplo de tabla Listado -->
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Productos
+                    <i class="fa fa-align-justify"></i> BEBIDAS
                     <button type="button" @click="abrirModal('articulo', 'registrar'); listarPrecio()"
                         class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
@@ -20,73 +20,62 @@
                 <div class="card-body">
                     <div class="form-group row">
                         <div class="col-md-6">
-                            <div class="input-group">
-                                <select class="form-control col-md-3" v-model="criterio">
-                                    <option value="nombre">Nombre</option>
-                                    <option value="descripcion">Descripción</option>
-                                </select>
+                            <div class="input-group">                   
                                 <input type="text" v-model="buscar" @keyup="listarArticulo(1, buscar, criterio, id_sucursal_actual)"
                                     class="form-control" placeholder="Texto a buscar">
                             </div>
                         </div>
                     </div>
+                    <div class="table-responsive">
                     <table class="table table-bordered table-striped table-sm">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Opciones</th>
-                                    <th>Código</th>
-                                    <th>Nombre</th>
-                                    <!-- <th>Presio1</th> -->
-                                    <th>Precio</th>
-            
-                                    <th>Precio Costo Unidad</th>
-                                    <th>Precio Costo Paquete</th>
-                                    <th>Categoría</th>
-                                    <th>Descripción</th>
-                                    <th>Foto</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="articulo in listaArticulosConImagenSrc" :key="articulo.id">
-                                    <td>
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Opciones</th>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>            
+                                <th>Costo x Unidad</th>
+                                <th>Costo x Paquete</th>
+                                <th>Categoría</th>
+                                <th>Foto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="articulo in listaArticulosConImagenSrc" :key="articulo.id">
+                                <td>
                                     <button type="button" @click="abrirModal('articulo', 'actualizar', articulo)"
-                                            class="btn btn-warning btn-sm">
-                                            <i class="icon-pencil"></i>
-                                        </button> &nbsp;
-                                        <template v-if="articulo.condicion">
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                @click="desactivarArticulo(articulo.id)">
-                                                <i class="icon-trash"></i>
-                                            </button>
-                                        </template>
-                                        <template v-else>
-                                            <button type="button" class="btn btn-info btn-sm"
-                                                @click="activarArticulo(articulo.id)">
-                                                <i class="icon-check"></i>
-                                            </button>
-                                        </template>
-                                    </td>
-                                    <td v-text="articulo.codigo"></td>
-                                    <td v-text="articulo.nombre"></td>
-                                    <td v-text="articulo.precio_venta"></td>
-                                    <td v-text="articulo.precio_costo_unid"></td>
-                                    <td v-text="articulo.precio_costo_paq"></td>
+                                        class="btn btn-warning btn-sm">
+                                        <i class="icon-pencil"></i>
+                                    </button> &nbsp;
+                                    <template v-if="articulo.condicion">
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                            @click="desactivarArticulo(articulo.id)">
+                                            <i class="icon-trash"></i>
+                                        </button>
+                                    </template>
+                                    <template v-else>
+                                        <button type="button" class="btn btn-info btn-sm"
+                                            @click="activarArticulo(articulo.id)">
+                                            <i class="icon-check"></i>
+                                        </button>
+                                    </template>
+                                </td>
+                                <td v-text="articulo.codigo"></td>
+                                <td v-text="articulo.nombre"></td>
+                                <td v-text="articulo.precio_venta"></td>
+                                <td v-text="articulo.precio_costo_unid"></td>
+                                <td v-text="articulo.precio_costo_paq"></td>                       
+                                <td v-text="articulo.nombre_categoria"></td>
+                                <td class="text-center">
+                                    <img :src="articulo.imagenSrc"
+                                        width="50" height="50" ref="imagen">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-
-                                    <!-- <td v-if="rolUsuario === 1" v-text="articulo.precio_venta"></td> -->
-                                    <!--<td v-if="rolUsuario === 1 && mostrarCostos === 1" v-text="articulo.precio_venta"></td>-->
-
-                                    <td v-text="articulo.nombre_categoria"></td>
-
-                                    <td v-text="articulo.descripcion"></td>
-                                    <td class="text-center">
-                                        <img :src="articulo.imagenSrc"
-                                            width="50" height="50" ref="imagen">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    <nav>
+                    <!--<nav>
                         <ul class="pagination">
                             <li class="page-item" v-if="pagination.current_page > 1">
                                 <a class="page-link" href="#"
@@ -102,7 +91,7 @@
                                     @click.prevent="cambiarPagina(pagination.current_page + 1, buscar, criterio)">Sig</a>
                             </li>
                         </ul>
-                    </nav>
+                    </nav>-->
                 </div>
             </div>
             <!-- Fin ejemplo de tabla Listado -->
@@ -256,9 +245,40 @@
                                     <button type="button" class="btn btn-primary" @click="calcularPrecio(precio, index)">Calcular</button>
                                 </div>
                             </div>
-                            
-                            <div class="row">
-                                <div class="col-md-4">
+                        </form>
+                        <div class="row">
+
+                        <div class="col-md-6">
+    <div class="form-group">
+        <label class="form-control-label"><strong>Categoría de la Bebida<span class="obligatorio">(Oblig.)</span></strong></label>
+        <div class="input-group w-100">
+            <input type="text" class="form-control w-100" disabled v-model="lineaseleccionada.nombre"
+                :class="{ 'border-red': lineaseleccionadaVacio }">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="button" @click="abrirModal2('Categorías')">...</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-6">
+    <div class="form-group">
+        <label class="form-control-label"><strong>Proveedor<span class="obligatorio">(Oblig.)</span></strong></label>
+        <div class="input-group w-100">
+            <input type="text" class="form-control w-100" disabled v-model="proveedorseleccionada.nombre"
+                :class="{ 'border-red': proveedorseleccionadaVacio }">
+            <div class="input-group-append">
+                <button @click="abrirModal2('Proveedors')" class="btn btn-primary">...</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+                        <div class="row">
+                                <!--<div class="col-md-4">
                                     <div class="form-group">
                                         <label class="form-control-label" for="text-input"><strong>Descripción</strong></label>
                                         <input type="email" 
@@ -268,7 +288,7 @@
                                         @input="descripcionVacio = false"
                                         placeholder="OPCIONAL Ingrese una descripción de la bebida">
                                     </div>
-                                </div>
+                                </div>-->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="form-control-label" for="text-input"><strong>Fotografia<span class="obligatorio">(Oblig.)</span></strong></label>
@@ -288,58 +308,7 @@
                                         </figure>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            
-                        </form>
-                        <div  class="row">
-                            <div class="col-md-4">
-                               
-                                <div class="form-group">
-                                    <label class="form-control-label" for="text-input"><strong>Categoría de la Bebida<span class="obligatorio">(Oblig.)</span></strong></label>
-                                    <div class="input-group">
-                                        <input type="text" disabled v-model="lineaseleccionada.nombre"
-                                        :class="{ 'border-red': lineaseleccionadaVacio }">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button" @click="abrirModal2('Categorías')">...</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style="display: none;" class="form-group">
-                                    <label class="form-control-label" for="text-input"><strong>Marca(*)</strong></label>
-                                    <div class="input-group">
-                                        <input type="text" disabled v-model="marcaseleccionada.nombre"
-                                        :class="{ 'border-red': marcaseleccionadaVacio }">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button" @click="abrirModal2('Marcas')">...</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-            
-                                <div style="display: none;" class="form-group">
-                                    <label class="form-control-label" for="text-input"><strong>Industria(*)</strong></label>
-                                    <div class="input-group">
-                                        <input type="text" disabled v-model="industriaseleccionada.nombre"
-                                        :class="{ 'border-red': industriaseleccionadaVacio }" />
-                                        <div class="input-group-append">
-                                            <button @click="abrirModal2('Industrias')" class="btn btn-primary">...</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-control-label" for="text-input"><strong>Proveedor<span class="obligatorio">(Oblig.)</span></strong></label>
-                                    <div class="input-group">
-                                        <input type="text" disabled v-model="proveedorseleccionada.nombre"
-                                        :class="{ 'border-red': proveedorseleccionadaVacio }" />
-                                        <div class="input-group-append">
-                                            <button @click="abrirModal2('Proveedors')" class="btn btn-primary">...</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
+                                <div class="col-md-4">
                                 
                                 <div style="display: none;" class="form-group">
                                     <label class="form-control-label" for="text-input"><strong>Grupo O Familia(*)</strong></label>
@@ -369,8 +338,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>                   
-                        </div>
+                            </div>        
+                            </div>
                     </div>
 
                     <div class="modal-footer">
@@ -543,7 +512,6 @@
                                 <thead>
                                     <tr>
                                         <th>Opciones</th>
-                                        <th>ID</th>
 
                                         <th>Nombre</th>
                                         <!-- <th>Estado</th> -->
@@ -586,7 +554,6 @@
                                             </button> &nbsp;
 
                                         </td>
-                                        <td v-text="arrayelemento.id"></td>
                                         <!-- <div v-if="tituloModal2=='Grupos'">
                                             <td  v-text="arrayelemento.nombre_grupo"></td>
                                         </div> -->
@@ -745,7 +712,7 @@
                                 </div>
                             </div>
                             <div v-if="tituloModal2 == 'Categorías'" class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input"><strong>Nombre Categoría</strong></label>
+                                <label class="col-md-3 form-control-label" for="email-input"><strong>Nombre Categoria <span class="obligatorio">(Obligatorio)</span></strong></label>
                                 <div class="col-md-9">
                                     <input type="text" v-model="nombreLinea" class="form-control1"
                                         :placeholder="placeholderInput('nombre')">
@@ -755,14 +722,28 @@
                                     <input type="text" v-model="descripcion" class="form-control1"
                                         :placeholder="placeholderInput('descripcion')">
                                 </div>
-                                <!--<label class="col-md-3 form-control-label" for="text-input"><strong>Código</strong></label>
-                                <div class="col-md-9">
-                                <select v-model="codigoProductoSin" class="form-control">
-                                    <option value="0" disabled>Seleccione</option>
-                                    <option v-for="productoServicio in arrayProductoServicio" :value="productoServicio.codigoProducto"
-                                        v-text="productoServicio.descripcionProducto"></option>
-                                </select>
-                                </div>-->
+                                    <label class="col-md-3 form-control-label" for="email-input"><strong>Actividad Económica <span class="obligatorio">(Obligatorio)</span></strong></label>
+                                    <div class="col-md-9">
+                                        <select v-model="codigoActividadEconomica" class="form-control">
+                                            <option value="0" disabled>Seleccione su Actividad Economica</option>
+                                            <option v-for="actividadEconomica in arrayActividadEconomica" :value="actividadEconomica.codigoCaeb"
+                                                v-text="actividadEconomica.descripcion"></option>
+                                        </select>
+                                    </div>
+                                    <label class="col-md-3 form-control-label" for="email-input"><strong>Código SIAT <span class="obligatorio">(Obligatorio)</span></strong></label>
+                                    <div class="col-md-9">
+                                        <select v-model="codigoProductoServicio" class="form-control">
+                                            <option 
+                                                v-for="productoServicio in arrayProductoServicio" 
+                                                :value="productoServicio.codigoProducto"
+                                                :title="productoServicio.descripcionProducto">
+                                                {{ productoServicio.descripcionProducto.length > 50 
+                                                    ? productoServicio.descripcionProducto.substring(0, 50) + "..." 
+                                                    : productoServicio.descripcionProducto 
+                                                }}
+                                            </option>
+                                        </select>
+                                </div>
                             </div>
                             <!-- prueba de habilitar  -->
                             <div v-if="tituloModal2 == 'Industrias'" class="form-group row">
@@ -798,7 +779,7 @@
                     <div v-else-if="tituloModal2 == 'Proveedors'" class="modal-body">
                         <form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="text-input"><strong>Nombre</strong></label>
+                                <label class="col-md-3 form-control-label" for="email-input"><strong>Nombre Proveedor <span class="obligatorio">(Obligatorio)</span></strong></label>
                                 <div class="col-md-9">
                                     <input type="text" v-model="nombre" class="form-control"
                                         placeholder="Nombre de la persona">
@@ -808,7 +789,7 @@
                                 <label class="col-md-3 form-control-label" for="text-input"><strong>Tipo Documento</strong></label>
                                 <div class="col-md-9">
                                     <select v-model="tipo_documento" class="form-control">
-                                            <option value="" disabled>Selecciona una tipo de documento</option>
+                                            <option value="" disabled>Selecciona una tipo de documento OPCIONAL</option>
                                             <option value="1">CI - CEDULA DE IDENTIDAD</option>
                                             <option value="2">CEX - CEDULA DE IDENTIDAD DE EXTRANJERO</option>
                                             <option value="5">NIT - NÚMERO DE IDENTIFICACIÓN TRIBUTARIA</option>
@@ -821,25 +802,20 @@
                                 <label class="col-md-3 form-control-label" for="text-input"><strong>Documento</strong></label>
                                 <div class="col-md-9">
                                     <input type="text" v-model="num_documento" class="form-control"
-                                        placeholder="Número de documento">
+                                        placeholder="Número de documento OPCIONAL">
                                 </div>
                             </div>
+
                             <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="email-input"><strong>Dirección</strong></label>
-                                <div class="col-md-9">
-                                    <input type="text" v-model="direccion" class="form-control" placeholder="Dirección">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="email-input"><strong>Teléfono</strong></label>
+                                <label class="col-md-3 form-control-label" for="email-input"><strong>Teléfono <span class="obligatorio">(Obligatorio)</span></strong></label>
                                 <div class="col-md-9">
                                     <input type="text" v-model="telefono" class="form-control" placeholder="Teléfono">
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-md-3 form-control-label" for="email-input"><strong>Email</strong></label>
-                                <div class="col-md-9">
-                                    <input type="email" v-model="email" class="form-control" placeholder="Email">
+
+                            <div v-show="errorIndustria" class="form-group row div-error">
+                                <div class="text-center text-error">
+                                    <div v-for="error in errorMostrarMsjIndustria" :key="error" v-text="error"></div>
                                 </div>
                             </div>
                         </form>
@@ -954,6 +930,11 @@ export default {
             proveedorseleccionada: [],
             gruposeleccionada: [],
             nombre_grupo: '',
+
+            arrayProductoServicio: [],
+            arrayActividadEconomica: [],
+            codigoActividadEconomica: '',
+            codigoProductoServicio: '',
 
             modal2: false,
             modal6: false,
@@ -1408,9 +1389,9 @@ export default {
                 });
         },
         registrarProveedor() {
-            // if (this.validarPersona()){
-            //     return;
-            // }
+            if (this.validarIndustria()) {
+                return;
+            }
 
             let me = this;
 
@@ -1430,9 +1411,9 @@ export default {
             });
         },
         actualizarProveedor() {
-            // if (this.validarPersona()){
-            //         return;
-            // }
+            if (this.validarIndustria()) {
+                return;
+            }
 
             let me = this;
 
@@ -1917,7 +1898,8 @@ export default {
                 'nombre': this.nombreLinea,
                 'condicion': this.condicion,
                 'descripcion':this.descripcion,
-                //'codigo':this.codigoProductoSin
+                'codigo': this.codigoProductoServicio,
+                'actividadEconomica': this.codigoActividadEconomica
             }).then(function (response) {
                 me.cerrarModal3();
                 //me.modal3=0;
@@ -1938,7 +1920,8 @@ export default {
                 'nombre': this.nombreLinea,
                 'condicion': this.condicion,
                 'descripcion': this.descripcion,
-                'codigo': this.codigoProductoSin,
+                'actividadEconomica': this.codigoActividadEconomica,
+                'codigo': this.codigoProductoServicio,
                 'id': this.linea_id
             }).then(function (response) {
                 me.cerrarModal3();
@@ -2132,7 +2115,7 @@ export default {
                                     // this.precio3=data['precio3'];
                                     this.descripcion = data['descripcion'];
                                     this.fotografia = data['fotografia'];
-                                    this.fotoMuestra = data['fotografia'] ? 'img/articulo/' + data['fotografia'] : 'img/articulo/defecto.jpg';
+                                    this.fotoMuestra = data['fotografia'] ? 'img/menu/' + data['fotografia'] : 'img/menu/defecto.jpg';
                                     //this.industriaseleccionada = { nombre: data['industriaseleccionada.nombre'] };
 
                                     //this.industriaseleccionada = {nombre: data['nombre_industria']};
@@ -2234,15 +2217,15 @@ export default {
             this.errorIndustria = 0;
             this.errorMostrarMsjIndustria = [];
 
-            if (this.tituloModal2 === 'Industrias') {
-                if (!this.nombre) this.errorMostrarMsjIndustria.push("El nombre de Industria no puede estar vacío.");
-            } else if (this.tituloModal2 === 'Marcas') {
-                if (!this.nombre) this.errorMostrarMsjIndustria.push("El nombre de Marca no puede estar vacío.");
-            } else if (this.tituloModal2 === 'Categorías') {
+       if (this.tituloModal3 === 'Registrar Proveedor') {
+                if (!this.nombre) this.errorMostrarMsjIndustria.push("El nombre del Proveedor no puede estar vacío.");
+                if (!this.telefono) this.errorMostrarMsjIndustria.push("El teléfono del Proveedor no puede estar vacío.");
+
+            }else if (this.tituloModal3 === 'Registrar Categoría') {
                 if (!this.nombreLinea) this.errorMostrarMsjIndustria.push("El nombre de la Categoría no puede estar vacío.");
                 if (!this.descripcion) this.errorMostrarMsjIndustria.push("La descripcion no puede estar vacío.");
-                //if (!this.codigoProductoSin) this.errorMostrarMsjIndustria.push("El codigo no puede estar vacío.");
-            }
+                if (!this.codigoActividadEconomica) this.errorMostrarMsjIndustria.push("El código de actividad económica no puede estar vacío.");
+                if (!this.codigoProductoServicio) this.errorMostrarMsjIndustria.push("El código de producto o servicio no puede estar vacío.");            }
 
             //if (!this.nombre) this.errorMostrarMsjIndustria.push("El nombre de Industria no puede estar vacío.");
             if (this.errorMostrarMsjIndustria.length) this.errorIndustria = 1;
@@ -2281,6 +2264,30 @@ export default {
                 }
             } 
         },
+
+        consultaProductosServicios() {
+                let me = this;
+                var url = '/categoria/consultaProductosServicios';
+                axios.get(url).then(function (response) {
+                    var respuesta = response.data;
+                    me.arrayProductoServicio = respuesta.RespuestaListaProductos.listaCodigos;
+                    console.log(respuesta.RespuestaListaProductos.listaCodigos);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            consultaActividadEconomica() {
+                let me = this;
+                var url = '/categoria/consultaActividadEconomica';
+                axios.get(url).then(function (response) {
+                    var respuesta = response.data;
+                    me.arrayActividadEconomica = respuesta.RespuestaListaActividades.listaActividades;
+                    console.log(respuesta.RespuestaListaActividades.listaActividades);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
         //############hasta aqui-#########
         //################-Abrl moda de industrial,marca,Linea########
         abrirModal3(modelo3, accion3, data = []) {
@@ -2344,9 +2351,10 @@ export default {
                                     this.tituloModal3 = 'Registrar Categoría';
                                     this.nombreLinea = '';
                                     this.descripcion = '';
-                                    this.codigoProductoSin = '';
                                     this.condicion = '';
                                     this.tipoAccion2 = 7;
+                                    this.codigoProductoServicio = '';
+                                    this.codigoActividadEconomica = '';
                                     break;
 
                                 }
@@ -2358,8 +2366,9 @@ export default {
                                     this.linea_id = data['id'];
                                     this.nombreLinea = data['nombre'];
                                     this.descripcion = data['descripcion'];
-                                    this.codigoProductoSin = data['codigo'];
                                     this.condicion = data['condicion'];
+                                    this.codigoProductoServicio = data['codigo'];
+                                    this.codigoActividadEconomica = data['actividadEconomica'];
                                     break;
                                 }
                         }
@@ -2488,6 +2497,8 @@ export default {
         //this.datosConfiguracion();
         this.listarArticulo('', '', this.criterio);
         //this.consultaProductosServicios();
+        this.consultaProductosServicios();
+        this.consultaActividadEconomica();
         
     }
 }

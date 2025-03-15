@@ -1,219 +1,13 @@
 <template>
     <main class="main">
-
-    <!--<Toolbar class="mb-4">
-        <template #start>
-            <Button label="Nuevo" icon="pi pi-plus" class="p-button-sm p-button-success mr-2" @click="abrirModal('persona', 'registrar')"/>
-            <Button label="Eliminar" icon="pi pi-trash" class="p-button-sm p-button-danger" @click="openDialog()"/>
-        </template>
-
-        <template #end>
-            <Button :label="exportar_label" icon="pi pi-upload" class="p-button-sm p-button-help" />
-        </template>
-    </Toolbar>
-
-    <DataTable
-        :value="arrayPersona"
-        :paginator="false"
-        :rows="10"
-        dataKey="id"
-        :rowHover="true"
-        responsiveLayout="scroll"
-        :filters="filters"
-        :selection.sync="usuariosSeleccionados"
-        :loading="loading"
-    >
-
-        <template #header>
-            <div class="table-header">
-                <h4>Lista usuarios</h4>
-                <span class="p-input-icon-left">
-                    <i class="pi pi-search"/>
-                    <InputText style="width: 13rem;" placeholder="Buscar ..." class="p-inputtext-sm" v-model="filters['global'].value"></InputText>
-                </span>
-            </div>
-        </template>
-
-        <template #empty>
-            Sin usuarios encontrados ...
-        </template>
-
-        <template #loading>
-            Cargando datos de los usuarios. Por fabor espere ...
-        </template>
-
-        <Column selectionMode="multiple" :styles="{'min-width': '3rem'}"></Column>
-        <Column header="Foto">
-            <template #body="slotProps">
-                <div class="imagen-lista">
-                    <ImagePreview v-if="slotProps.data.fotografia" :src="'img/usuarios/' + slotProps.data.fotografia" alt="Usuario" preview />
-                    <ImagePreview v-else src="img/usuarios/defecto.jpg" alt="Usuario default" preview />
-                </div>
-            </template>
-        </Column>
-        <Column field="nombre" header="Nombre" sortable :styles="{'min-width': '7rem'}"></Column>
-        <Column field="num_documento" header="Documento" sortable :styles="{'min-width': '5rem'}"></Column>
-        <Column field="direccion" header="Dirección" sortable :styles="{'min-width': '7rem'}"></Column>
-        <Column field="telefono" header="Teléfono" sortable :styles="{'min-width': '5rem'}"></Column>
-        <Column field="email" header="Email" sortable :styles="{'min-width': '7rem'}"></Column>
-        <Column field="usuario" header="Usuario" sortable :styles="{'min-width': '5rem'}"></Column>
-        <Column field="rol" header="Rol" sortable :style="{'min-width': '5rem'}"></Column>
-        <Column field="sucursal" header="Sucursal" sortable :styles="{'min-width': '5rem'}"></Column>
-        <Column field="condicion" header="Estado" sortable :styles="{'min-width': '4rem'}">
-            <template #body="slotProps">
-                <Tag v-if="slotProps.data.condicion == 1" class="mr-2" icon="pi pi-check" severity="success" value="Activo"></Tag>
-                <Tag v-else-if="slotProps.data.condicion == 0" class="mr-2" icon="pi pi-times" severity="danger" value="Desactivado"></Tag>
-            </template>
-        </Column>
-        <Column header="Opciones" :styles="{'min-width':'9rem', 'max-width':'10rem'}">
-            <template #body>
-                <div class="botones_espacio">
-                    <Button class="p-button-sm p-button-warning" type="button" icon="pi pi-pencil" @click="actualizarUsuario" />
-                    <Button class="p-button-sm p-button-danger" type="button" icon="pi pi-ban" @click="actualizarUsuario" />
-                </div>
-            </template>
-        </Column>
-
-    </DataTable>
-
-    <Dialog
-        :visible.sync="nuevoUsuarioDialog"
-        :modal="true"
-        :position="posicionDialog"
-    >
-
-        <template #header>
-            <div class="titulo-modal">
-                <i class="pi pi-users sidebar-icon"></i>
-                <h4 class="sidebar-title">Nuevo Usuario</h4>
-            </div>
-        </template>
-
-        <div class="p-fluid p-formgrid p-grid">
-
-            <div class="p-field p-col-12 p-md-6">
-                <div class="selector-imagen">
-                    <div style="display: flex; justify-content: center;">
-                        <img v-if="imagen == ''" src="img/usuarios/defecto.jpg" alt="Usuario default" class="product-image"  />
-                        <img v-else :src="imagen" alt="Foto Usuario" class="product-image"  />
-                    </div>
-                    <FileUpload mode="basic" name="demo[]" accept="image/*" :maxFileSize="5000000" :customUpload="true" @select="onSelect" ref="fileUpload" chooseLabel="Fotografia"/>
-                </div>
-            </div>
-
-            <div class="p-col-12 p-md-6">
-                <div class="p-grid" style="margin-top: 0rem;">
-                    <div class="p-field p-col-12">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-user"></i>
-                            </span>
-                            <InputText placeholder="Nombre Completo" class="p-inputtext-sm" v-model="form.nombreCompleto" :class="{'p-invalid': submitted && v$.form.nombreCompleto.$invalid}" />
-                        </div>
-                        <small class="p-error" v-if="(submitted && v$.form.nombreCompleto.required.$invalid)"><strong>Nombre Completo es obligatorio.</strong></small>
-                    </div>
-
-                    <div class="p-field p-col-12">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-google"></i>
-                            </span>
-                            <InputText placeholder="Correo electrónico" class="p-inputtext-sm" v-model="form.email" :class="{'p-invalid': submitted && v$.form.email.$invalid}" />
-                        </div>
-                        <small class="p-error" v-if="(submitted && v$.form.email.required.$invalid)"><strong>Correo Electrónico es obligatorio.</strong></small>
-                        <small class="p-error" v-if="(submitted && v$.form.email.email.$invalid)"><strong>Correo Electrónico inválido.</strong></small>
-                    </div>
-
-                    <div class="p-field p-col-12">
-                        <div class="p-inputgroup">
-                            <span class="p-inputgroup-addon">
-                                <i class="pi pi-user"></i>
-                            </span>
-                            <InputText placeholder="Teléfono" class="p-inputtext-sm" v-model="form.telefono" :class="{'p-invalid': submitted && v$.form.telefono.$invalid}" />
-                        </div>
-                        <small class="p-error" v-if="(submitted && v$.form.telefono.required.$invalid)"><strong>Teléfono es obligatorio.</strong></small>
-                        <small class="p-error" v-if="(submitted && v$.form.telefono.numeric.$invalid)"><strong>Solo se aceptan números.</strong></small>
-                        <small class="p-error" v-if="(submitted && v$.form.telefono.minLength.$invalid)"><strong>Minimo 7 dígitos.</strong></small>
-                        <small class="p-error" v-if="(submitted && v$.form.telefono.maxLength.$invalid)"><strong>Maximo 8 dígitos.</strong></small>
-                    </div>        
-                </div>
-            </div>
-
-            <div class="p-field p-col-12 p-md-6">
-                <Dropdown class="p-inputtext-sm" v-model="form.tipo_documento" :options="arrayDocumentos" optionLabel="nombre" placeholder="Tipos de documento" :class="{'p-invalid': submitted && v$.form.tipo_documento.$invalid}"/>
-                <small class="p-error" v-if="(submitted && v$.form.tipo_documento.required.$invalid)"><strong>Tipo de Documento es obligatorio.</strong></small>
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-folder-open"></i>
-                    </span>
-                    <InputText placeholder="Número Documento" class="p-inputtext-sm" v-model="form.num_documento" :class="{'p-invalid': submitted && v$.form.num_documento.$invalid}"/>
-                </div>
-                <small class="p-error" v-if="(submitted && v$.form.num_documento.required.$invalid)"><strong>Número de Documento es obligatorio.</strong></small>
-            </div>
-
-            
-            <div class="p-field p-col-12 p-md-6">
-                <Dropdown class="p-inputtext-sm" v-model="form.sucursal" :options="arraySucursal" optionLabel="nombre" placeholder="Sucursal asignada" :class="{'p-invalid': submitted && v$.form.sucursal.$invalid}"/>
-                <small class="p-error" v-if="(submitted && v$.form.sucursal.required.$invalid)"><strong>Sucursal es obligatorio.</strong></small>
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <Dropdown class="p-inputtext-sm" v-model.trim="form.rol" :options="arrayRol" optionLabel="nombre" placeholder="Roles" :class="{'p-invalid': submitted && v$.form.rol.$invalid}"/>
-                <small class="p-error" v-if="(submitted && v$.form.rol.required.$invalid)"><strong>Rol de Usuario es obligatorio.</strong></small>
-            </div>
-            
-            <div class="p-field p-col-12 p-md-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-user"></i>
-                    </span>
-                    <InputText placeholder="Nombre Usuario" class="p-inputtext-sm" v-model="form.nombreUsuario" :class="{'p-invalid': submitted && v$.form.nombreUsuario.$invalid}" />
-                </div>
-                <small class="p-error" v-if="(submitted && v$.form.nombreUsuario.required.$invalid)"><strong>Usuario es obligatorio.</strong></small>
-            </div>
-            <div class="p-field p-col-12 p-md-6">
-                <div class="p-inputgroup">
-                    <span class="p-inputgroup-addon">
-                        <i class="pi pi-shield"></i>
-                    </span>
-                    <Password placeholder="Contraseña" class="p-inputtext-sm" v-model="form.password" toggleMask :class="{'p-invalid': submitted && v$.form.password.$invalid}"></Password>
-                </div>
-                <small class="p-error" v-if="(submitted && v$.form.password.required.$invalid)"><strong>Contraseña es obligatorio.</strong></small>
-            </div>
-
-            <div class="p-field p-col-12">
-                <Textarea
-                    placeholder="Direccion del domicilio ..."
-                    class="p-inputtext-sm"
-                    v-model="form.direccion"
-                    rows="1"
-                    cols="20"
-                    :autoResize="true"
-                    :class="{'p-invalid': submitted && v$.form.direccion.$invalid}"
-                />
-                <small class="p-error" v-if="(submitted && v$.form.direccion.required.$invalid)"><strong>Dirección es obligatorio.</strong></small>
-            </div>
-
-        </div>
-
-        <template #footer >
-            <div class="contenedor-footer">
-                <div class="contenedor-button-footer">
-                    <Button label="Cerrar" icon="pi pi-times" class="p-button-sm p-button-raised p-button-danger" @click="hideDialog"/>
-                </div>
-                <div class="contenedor-button-footer">
-                    <Button label="Guardar" icon="pi pi-check" class="p-button-sm p-button-raised p-button-success" @click="registrarUsuario"/>
-                </div>
-            </div>
-        </template>
-    </Dialog>-->
-
-
+        <ol class="breadcrumb">
+                <!--<li class="breadcrumb-item"><a href="/">Escritorio</a></li>-->
+            </ol>
+            <div class="container-fluid">
 
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Usuarios
+                    <i class="fa fa-align-justify"></i> USUARIOS
                     <button type="button" @click="abrirModal('persona', 'registrar')" class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
                     </button>
@@ -230,7 +24,6 @@
                                     <option value="num_documento">Documento</option>
                                     <option value="email">Email</option>
                                     <option value="telefono">Teléfono</option>
-                                    <option value="nombre">Sucursal</option>
                                 </select>
                                 <input type="text" v-model="buscar" @keyup="listarPersona(1, buscar, criterio)"
                                     class="form-control" placeholder="Texto a buscar">
@@ -313,6 +106,8 @@
                     </nav>
                 </div>
             </div>
+        </div>
+
             <!-- Fin ejemplo de tabla Listado -->
         <!--Inicio del modal agregar/actualizar-->
         <div class="modal fade" tabindex="-1" :class="{ 'mostrar': modal }" role="dialog" aria-labelledby="myModalLabel"
@@ -823,7 +618,7 @@ export default {
             reader.readAsDataURL(file);
         },
 
-        /*registrarPersona() {
+        registrarPersona() {
             if (this.validarPersona()) {
                 return;
             }
@@ -870,7 +665,7 @@ export default {
                 );
                 console.log(error);
             });
-        },*/
+        },
 
         actualizarPersona() {
             if (this.validarPersona()) {

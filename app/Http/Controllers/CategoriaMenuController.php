@@ -11,17 +11,15 @@ class CategoriaMenuController extends Controller
 {
     public function index(Request $request)
     {
-
-
         if (!$request->ajax()) return redirect('/');
 
         $buscar = $request->buscar;
         $criterio = $request->criterio;
 
         if ($buscar == '') {
-            $menuCate = categoria_menu::orderBy('id', 'desc')->paginate(11);
+            $menuCate = categoria_menu::orderBy('id', 'desc')->paginate(7);
         } else {
-            $menuCate = categoria_menu::where($criterio, 'like', '%' . $buscar . '%')->orderBy('id', 'desc')->paginate(11);
+            $menuCate = categoria_menu::where($criterio, 'like', '%' . $buscar . '%')->orderBy('id', 'desc')->paginate(7);
         }
 
 

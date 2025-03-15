@@ -8,7 +8,7 @@
                 <!-- Ejemplo de tabla Listado -->
                 <div class="card">
                     <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Categorías de Bebidas
+                        <i class="fa fa-align-justify"></i> CATEGORÍA BEBIDAS
                         <button type="button" @click="abrirModal('categoria','registrar')" class="btn btn-secondary">
                             <i class="icon-plus"></i>&nbsp;Nuevo
                         </button>
@@ -107,7 +107,7 @@
                                 <div class="form-group row">
                                     <label class="col-md-4 form-control-label" for="email-input"><strong>Descripción</strong></label>
                                     <div class="col-md-8">
-                                        <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese una descripción">
+                                        <input type="email" v-model="descripcion" class="form-control" placeholder="Ingrese una descripción (OPCIONAL)">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -124,9 +124,15 @@
                                     <label class="col-md-4 form-control-label" for="email-input"><strong>Código SIAT <span class="obligatorio">(Obligatorio)</span></strong></label>
                                     <div class="col-md-8">
                                         <select v-model="codigoProductoServicio" class="form-control">
-                                            <option value="0" disabled>Seleccione el Codigo Siat</option>
-                                            <option v-for="productoServicio in arrayProductoServicio" :value="productoServicio.codigoProducto"
-                                                v-text="productoServicio.descripcionProducto"></option>
+                                            <option 
+                                                v-for="productoServicio in arrayProductoServicio" 
+                                                :value="productoServicio.codigoProducto"
+                                                :title="productoServicio.descripcionProducto">
+                                                {{ productoServicio.descripcionProducto.length > 50 
+                                                    ? productoServicio.descripcionProducto.substring(0, 50) + "..." 
+                                                    : productoServicio.descripcionProducto 
+                                                }}
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -398,16 +404,19 @@
                 }
                 }) 
             },
-            validarCategoria(){
-                this.errorCategoria=0;
-                this.errorMostrarMsjCategoria =[];
+            validarCategoria() {
+                this.errorCategoria = 0;
+                this.errorMostrarMsjCategoria = [];
 
                 if (!this.nombre) this.errorMostrarMsjCategoria.push("El nombre de la categoría no puede estar vacío.");
+                if (!this.codigoActividadEconomica) this.errorMostrarMsjCategoria.push("El código de actividad económica no puede estar vacío.");
+                if (!this.codigoProductoServicio) this.errorMostrarMsjCategoria.push("El código de producto o servicio no puede estar vacío.");
 
                 if (this.errorMostrarMsjCategoria.length) this.errorCategoria = 1;
 
                 return this.errorCategoria;
             },
+
             cerrarModal(){
                 this.modal=0;
                 this.tituloModal='';

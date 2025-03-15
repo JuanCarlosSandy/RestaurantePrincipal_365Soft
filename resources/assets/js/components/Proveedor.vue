@@ -8,7 +8,7 @@
                 <!-- Ejemplo de tabla Listado -->
                 <div class="card">
                     <div class="card-header">
-                        <i class="fa fa-align-justify"></i> Proveedores
+                        <i class="fa fa-align-justify"></i> PROVEEDORES
                         <button type="button" @click="abrirModal('persona','registrar')" class="btn btn-secondary">
                             <i class="icon-plus"></i>&nbsp;Nuevo
                         </button>
@@ -20,7 +20,6 @@
                                     <select class="form-control col-md-3" v-model="criterio">
                                       <option value="nombre">Nombre</option>
                                       <option value="num_documento">Documento</option>
-                                      <option value="email">Email</option>
                                       <option value="telefono">Teléfono</option>
                                     </select>
                                     <input type="text" v-model="buscar" @keyup="listarPersona(1,buscar,criterio)" class="form-control" placeholder="Texto a buscar">
@@ -35,9 +34,7 @@
           <th>Nombre Proveedor</th>
           <th>Tipo Documento</th>
           <th>NIT/CI</th>
-          <th>Dirección</th>
           <th>Teléfono</th>
-          <th>Email</th>
         </tr>
       </thead>
       <tbody>
@@ -54,9 +51,7 @@
           <td>{{ persona.nombre }}</td>
           <td>{{ getTipoDocumentoText(persona.tipo_documento) }}</td>
           <td>{{ persona.num_documento }}</td>
-          <td>{{ persona.direccion }}</td>
           <td>{{ persona.telefono }}</td>
-          <td>{{ persona.email }}</td>
         </tr>
       </tbody>
     </table>
@@ -116,24 +111,24 @@
                                         <input type="text" v-model="num_documento" class="form-control" placeholder="Ingrese número de Documento - OPCIONAL">                                        
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                               <!-- <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input"><strong>Dirección</strong></label>
                                     <div class="col-md-9">
                                         <input type="text" v-model="direccion" class="form-control" placeholder="Ingrese la ubicación del Proveedor - OPCIONAL">
                                     </div>
-                                </div>
+                                </div>-->
                                 <div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input"> <strong>Teléfono <span class="obligatorio">(Obligatorio)</span></strong></label>                                    
                                     <div class="col-md-9">
                                         <input type="text" v-model="telefono" class="form-control" placeholder="Ingrese el teléfono del Proveedor">
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <!--<div class="form-group row">
                                     <label class="col-md-3 form-control-label" for="email-input"><strong>Correo Electronico </strong></label>
                                     <div class="col-md-9">
                                         <input type="email" v-model="email" class="form-control" placeholder="Ingrese el correo electronico del Proveedor - OPCIONAL">
                                     </div>
-                                </div>
+                                </div>-->
 
                                 <div v-show="errorPersona" class="form-group row div-error">
                                     <div class="text-center text-error">

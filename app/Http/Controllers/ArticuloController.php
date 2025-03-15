@@ -94,7 +94,6 @@ class ArticuloController extends Controller
                 'articulos.id',
                 'articulos.idcategoria_producto as idcategoria_articulo',
                 'articulos.idproveedor',
-                //'articulos.idmedida',
                 'articulos.nombre',
                 'articulos.codigo',
                 'articulos.nombre_generico',
@@ -133,48 +132,54 @@ class ArticuloController extends Controller
 
 
 
-    public function listarArticuloSinRepetir(Request $request) {
+    public function listarArticuloSinRepetir(Request $request)
+{
+    $buscar = $request->buscar;
 
-        $buscar = $request->buscar;
-        $criterio = $request->criterio;
-
-        if (!$request->ajax())
-            return redirect('/');
-
-        $articulos = Articulo::join('categoria_producto', 'articulos.idcategoria_producto', '=', 'categoria_producto.id')
-                ->join('proveedores', 'articulos.idproveedor', '=', 'proveedores.id')
-                ->join('personas', 'proveedores.id', '=', 'personas.id')
-
-                ->select(
-                    'articulos.id',
-                    'articulos.idcategoria_producto',
-                    'articulos.idproveedor',
-                    'articulos.nombre',
-                    'articulos.codigo',
-
-                    'articulos.nombre_generico',
-
-                    'categoria_producto.nombre as nombre_categoria',
-                    'categoria_producto.codigo as codigoProductoSin',
-                    'categoria_producto.actividadEconomica as actividadEconomica',
-
-                    'articulos.precio_costo_unid',
-                    'articulos.precio_costo_paq',
-                    'articulos.precio_venta',
-                    'articulos.stockmin',
-                    'personas.nombre as nombre_proveedor',
-                    'articulos.descripcion',
-                    'articulos.condicion',
-                    'articulos.fotografia',
-                    'articulos.unidad_paquete',
-                )
-                
-                ->orderBy('articulos.id', 'desc')
-                ->where('articulos.' . $criterio, 'like', '%' . $buscar . '%')
-                ->get();
-
-        return ['articulos' => $articulos];
+    if (!$request->ajax()) {
+        return redirect('/');
     }
+
+    $articulos = Articulo::join('categoria_producto', 'articulos.idcategoria_producto', '=', 'categoria_producto.id')
+        ->join('proveedores', 'articulos.idproveedor', '=', 'proveedores.id')
+        ->join('personas', 'proveedores.id', '=', 'personas.id')
+        ->select(
+            'articulos.id',
+            'articulos.idcategoria_producto',
+            'articulos.idproveedor',
+            'articulos.nombre',
+            'articulos.codigo',
+            'articulos.nombre_generico',
+            'categoria_producto.nombre as nombre_categoria',
+            'categoria_producto.codigo as codigoProductoSin',
+            'categoria_producto.actividadEconomica as actividadEconomica',
+            'articulos.precio_costo_unid',
+            'articulos.precio_costo_paq',
+            'articulos.precio_venta',
+            'articulos.stockmin',
+            'personas.nombre as nombre_proveedor',
+            'articulos.descripcion',
+            'articulos.condicion',
+            'articulos.fotografia',
+            'articulos.unidad_paquete'
+        )
+        ->orderBy('articulos.id', 'desc');
+
+    // Si hay un término de búsqueda, filtrar en múltiples columnas
+    if (!empty($buscar)) {
+        $articulos->where(function ($query) use ($buscar) {
+            $query->where('articulos.nombre', 'like', "%$buscar%")
+                ->orWhere('articulos.codigo', 'like', "%$buscar%")
+                ->orWhere('articulos.precio_venta', 'like', "%$buscar%")
+                ->orWhere('articulos.precio_costo_unid', 'like', "%$buscar%")
+                ->orWhere('articulos.precio_costo_paq', 'like', "%$buscar%")
+                ->orWhere('categoria_producto.nombre', 'like', "%$buscar%")
+                ->orWhere('personas.nombre', 'like', "%$buscar%"); // Buscar también por proveedor
+        });
+    }
+
+    return ['articulos' => $articulos->get()];
+}
 
     public function listarArticulo(Request $request)
     {

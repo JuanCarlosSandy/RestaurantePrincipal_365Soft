@@ -19,63 +19,49 @@ class MenuController extends Controller
 {
     //
     public function index(Request $request)
-    {
-        if (!$request->ajax())
-            return redirect('/');
+{
+    if (!$request->ajax()) return redirect('/');
 
-        $buscar = $request->buscar;
-        $criterio = $request->criterio;
+    $buscar = $request->buscar;
 
-        if ($buscar == '') {
-            $menu = Menu::join('categoria_menu', 'menu.idcategoria_menu', '=', 'categoria_menu.id')
+    $menu = Menu::join('categoria_menu', 'menu.idcategoria_menu', '=', 'categoria_menu.id')
+        ->select(
+            'menu.id',
+            'menu.idcategoria_menu',
+            'menu.codigo',
+            'menu.nombre',
+            'menu.precio_venta',
+            'menu.descripcion',
+            'menu.condicion',
+            'menu.fotografia',
+            'categoria_menu.nombre as nombre_categoria'
+        );
 
-                ->select(
-                    'menu.id',
-                    'menu.idcategoria_menu',
-                    'menu.codigo',
-                    'menu.nombre',
-                    'menu.precio_venta',
-                    'menu.descripcion',
-                    'menu.condicion',
-                    'menu.fotografia',
-                    'categoria_menu.nombre as nombre_categoria',
-
-                )
-                ->orderBy('menu.id', 'desc')
-                ->paginate(8);
-        } else {
-            $menu = Menu::join('categoria_menu', 'menu.idcategoria_menu', '=', 'categoria_menu.id')
-
-                ->select(
-                    'menu.id',
-                    'menu.idcategoria_menu',
-                    'menu.codigo',
-                    'menu.nombre',
-                    'menu.precio_venta',
-                    'menu.descripcion',
-                    'menu.condicion',
-                    'menu.fotografia',
-                    'categoria_menu.nombre as nombre_categoria',
-
-                )
-                ->where('menu.' . $criterio, 'like', '%' . $buscar . '%')
-                ->orderBy('menu.id', 'desc')
-                ->paginate(8);
-        }
-
-
-        return [
-            'pagination' => [
-                'total' => $menu->total(),
-                'current_page' => $menu->currentPage(),
-                'per_page' => $menu->perPage(),
-                'last_page' => $menu->lastPage(),
-                'from' => $menu->firstItem(),
-                'to' => $menu->lastItem(),
-            ],
-            'articulos' => $menu
-        ];
+    if (!empty($buscar)) {
+        $menu->where(function ($query) use ($buscar) {
+            $query->where('menu.codigo', 'like', "%$buscar%")
+                ->orWhere('menu.nombre', 'like', "%$buscar%")
+                ->orWhere('menu.precio_venta', 'like', "%$buscar%")
+                ->orWhere('menu.descripcion', 'like', "%$buscar%")
+                ->orWhere('categoria_menu.nombre', 'like', "%$buscar%");
+        });
     }
+
+    $menu = $menu->orderBy('menu.id', 'desc')->paginate(7);
+
+    return [
+        'pagination' => [
+            'total'        => $menu->total(),
+            'current_page' => $menu->currentPage(),
+            'per_page'     => $menu->perPage(),
+            'last_page'    => $menu->lastPage(),
+            'from'         => $menu->firstItem(),
+            'to'           => $menu->lastItem(),
+        ],
+        'articulos' => $menu
+    ];
+}
+
 
     public function getAllMenu(Request $request)
     {

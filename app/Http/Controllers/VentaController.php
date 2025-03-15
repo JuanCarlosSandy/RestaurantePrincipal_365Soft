@@ -3397,7 +3397,7 @@ public function imprimirResivoRollo($id)
         return response()->download(public_path('docs/facturaCarta.pdf'));
     }
 
-    public function imprimirFacturaRollo($id)
+    public function imprimirFacturaRollo($id, $correo)
     {
         $user = Auth::user();
         $codigoPuntoVenta = '';
@@ -3626,7 +3626,7 @@ public function imprimirResivoRollo($id)
         $pdfPath = public_path('docs/facturaRollo.pdf');
         $xmlPath = public_path("docs/facturaxml.xml");
     
-        //\Mail::to($correo)->send(new \App\Mail\FacturaElectrónica($xmlPath, $pdfPath));
+        \Mail::to($correo)->send(new \App\Mail\FacturaElectrónica($xmlPath, $pdfPath));
     
         return response()->json(['url' => url('docs/facturaRollo.pdf')]);
     }

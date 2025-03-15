@@ -293,7 +293,7 @@ Route::group(['middleware' => ['auth']], function () {
         //FACTURAS
         Route::get('/factura', 'SiatController@index');
         Route::get('/factura/getFactura/{id}', 'SiatController@getFactura');
-        Route::get('/factura/imprimirRollo/{id}', 'VentaController@imprimirFacturaRollo');
+        Route::get('/factura/imprimirRollo/{id}/{correo}', 'VentaController@imprimirFacturaRollo');
         Route::get('/factura/imprimirCarta/{id}/{correo}', 'VentaController@imprimirFactura');
         Route::get('/factura/imprimirRolloOffline/{id}/{correo}', 'VentaController@imprimirFacturaRolloOffline');
         Route::get('/factura/imprimirCartaOffline/{id}/{correo}', 'VentaController@imprimirFacturaOffline');

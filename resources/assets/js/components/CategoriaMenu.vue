@@ -8,7 +8,7 @@
         <!-- Ejemplo de tabla Listado -->
         <div class="card">
             <div class="card-header">
-                <i class="fa fa-align-justify"></i> Categoría del Menu
+                <i class="fa fa-align-justify"></i> CATEGORÍA MENÚ
                 <button type="button" @click="abrirModal('categoria','registrar')" class="btn btn-secondary">
                     <i class="icon-plus"></i>&nbsp;Nuevo
                 </button>
@@ -120,15 +120,21 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-md-4 form-control-label" for="email-input"><strong>Código SIAT<span class="obligatorio">(Obligatorio)</span></strong></label> 
-                            <div class="col-md-8">
-                                <select v-model="codigoProductoServicio" class="form-control">
-                                    <option value="0" disabled>Seleccione</option>
-                                    <option v-for="productoServicio in arrayProductoServicio" :value="productoServicio.codigoProducto"
-                                        v-text="productoServicio.descripcionProducto"></option>
-                                </select>
-                            </div>
-                        </div>
+                                    <label class="col-md-4 form-control-label" for="email-input"><strong>Código SIAT <span class="obligatorio">(Obligatorio)</span></strong></label>
+                                    <div class="col-md-8">
+                                        <select v-model="codigoProductoServicio" class="form-control">
+                                            <option 
+                                                v-for="productoServicio in arrayProductoServicio" 
+                                                :value="productoServicio.codigoProducto"
+                                                :title="productoServicio.descripcionProducto">
+                                                {{ productoServicio.descripcionProducto.length > 50 
+                                                    ? productoServicio.descripcionProducto.substring(0, 50) + "..." 
+                                                    : productoServicio.descripcionProducto 
+                                                }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
                         <div v-show="errorCategoria" class="form-group row div-error">
                             <div class="text-center text-error">
                                 <div v-for="error in errorMostrarMsjCategoria" :key="error" v-text="error">
