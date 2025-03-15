@@ -414,7 +414,7 @@
                                             </form>
                                         </div>
                                     </div>
-                                </TabPanel>-->
+                                </TabPanel>
 
                                 <TabPanel header="Tarjeta">
                                     <div>
@@ -430,7 +430,7 @@
                                             </form>
                                         </div>
                                     </div>
-                                </TabPanel>
+                                </TabPanel>-->
 
                                 <TabPanel header="QR">
                                     <div class="d-flex justify-content-center align-items-center">
@@ -2135,10 +2135,10 @@ export default {
                     const response = await axios.post('/factura/verificarNit/' + numeroDocumento);
                     if (response.data === 'NIT ACTIVO') {
                         me.codigoExcepcion = 0;
-                        alert("NIT VÁLIDO.");
+                        //alert("NIT VÁLIDO.");
                     } else {
                         me.codigoExcepcion = 1;
-                        alert("NIT INVÁLIDO.");
+                        //alert("NIT INVÁLIDO.");
                     }
                 }else{
                     me.codigoExcepcion = 0;

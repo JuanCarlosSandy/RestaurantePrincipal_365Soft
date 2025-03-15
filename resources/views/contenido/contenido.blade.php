@@ -265,6 +265,9 @@
             <template v-if="menu==9">
             <consultaingreso></consultaingreso>
             </template>
+            <template v-if="menu==51">
+                <reporteinventariofisico></reporteinventariofisico>
+            </template>
             <template v-if="menu==11">
                 <h1>Ayuda</h1>
             </template>
@@ -275,6 +278,13 @@
 
             <template v-if="menu==17">
                 <editarperfil></editarperfil>
+            </template>
+
+            <template v-if="menu==24">
+                <almacenes></almacenes>
+            </template>
+            <template v-if="menu==25">
+                <inventarios></inventarios>
             </template>
 
             @elseif (Auth::user()->idrol == 4)

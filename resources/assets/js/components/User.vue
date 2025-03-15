@@ -126,7 +126,7 @@
                         <div class="col-md-6">
                             <!-- Columna izquierda -->
                             <div class="form-group">
-                                <label class="form-control-label" for="text-input"><strong>Nombre(*)</strong></label>
+                                <label class="form-control-label" for="text-input"><strong>Nombre <span class="obligatorio">(Obligatorio)</span></strong></label>    
                                 <input type="text" v-model="nombre" class="form-control" placeholder="Nombre de la persona">
                             </div>
                             <div class="form-group">
@@ -145,7 +145,7 @@
                                 <input type="email" v-model="telefono" class="form-control" placeholder="Teléfono">
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="email-input"><strong>Rol</strong></label>
+                                <label class="form-control-label" for="email-input"><strong>Rol <span class="obligatorio">(Obligatorio)</span></strong></label>    
                                 <select v-model="idrol" class="form-control">
                                     <option value="0" disabled>Seleccione</option>
                                     <option v-for="role in arrayRol" :key="role.id" :value="role.id"
@@ -153,7 +153,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="email-input"><strong>Usuario</strong></label>
+                                <label class="form-control-label" for="email-input"><strong>Usuario <span class="obligatorio">(Obligatorio)</span></strong></label>    
                                 <input type="text" v-model="usuario" class="form-control" placeholder="Nombre del usuario">
                             </div>
                             <div class="form-group">
@@ -185,7 +185,7 @@
                                 <input type="email" v-model="email" class="form-control" placeholder="Email">
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="email-input"><strong>Sucursal</strong></label>
+                                <label class="form-control-label" for="email-input"><strong>Sucursal <span class="obligatorio">(Obligatorio)</span></strong></label>    
                                 <select v-model="idsucursal" class="form-control">
                                     <option value="0" disabled>Seleccione</option>
                                     <option v-for="sucursal in arraySucursal" :key="sucursal.id" :value="sucursal.id"
@@ -193,7 +193,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label" for="email-input"><strong>Clave</strong></label>
+                                <label class="form-control-label" for="email-input"><strong>Clave <span class="obligatorio">(Obligatorio)</span></strong></label>    
                                 <input type="password" v-model="password" class="form-control" placeholder="Clave del usuario">
                             </div>
                         </div>
@@ -718,6 +718,7 @@ export default {
             if (!this.usuario) this.errorMostrarMsjPersona.push("El nombre de usuario no puede estar vacío.");
             if (!this.password) this.errorMostrarMsjPersona.push("La password del usuario no puede estar vacía.");
             if (this.idrol == 0) this.errorMostrarMsjPersona.push("Seleccione una Role.");
+            if (this.idsucursal == 0) this.errorMostrarMsjPersona.push("Seleccione una Sucursal.");
             if (this.errorMostrarMsjPersona.length) this.errorPersona = 1;
 
             return this.errorPersona;
@@ -1077,6 +1078,9 @@ export default {
     .text-error {
         color: red !important;
         font-weight: bold;
+    }
+    .obligatorio {
+    color: red;
     }
 
     .table-responsive {

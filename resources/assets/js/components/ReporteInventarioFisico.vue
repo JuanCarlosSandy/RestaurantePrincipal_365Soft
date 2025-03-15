@@ -584,7 +584,7 @@ import * as XLSX from 'xlsx-js-style';
         
         listaReporte() {
             let me = this;
-            var url = '/reporte-inventario-fisico-valorado/'+me.tipoSeleccionado +'?&fecha_vencimiento=2026-01-01 ';
+            var url = '/reporte-inventario-fisico-valorado/'+me.tipoSeleccionado +'?&fecha_vencimiento=2099-01-01 ';
 
             // Agregar los parámetros obligatorios
             url += '&idAlmacen=' + this.almacenseleccionada.id + '&idLinea=' + this.lineaseleccionada.id ;
