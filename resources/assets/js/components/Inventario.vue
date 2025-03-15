@@ -1,5 +1,7 @@
 <template>
     <main class="main">
+        <div class="p-p-4 p-mx-auto" style="max-width: 100%;">
+
         <Panel header="Menu Completo" style="font-size: 1.5rem;" :toggleable="false">
             <template #header>
                 <div class="header-container">
@@ -60,6 +62,8 @@
 
             </DataTable>
         </Panel>
+    </div>
+
     </main>
 </template>
 

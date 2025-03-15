@@ -1,6 +1,8 @@
 <template>
     <main class="main">
-    
+        <div class="p-p-4 p-mx-auto" style="max-width: 100%;"> 
+
+        
         <Panel header="Reporte Ventas" :toggleable="false">
             <span class="badge bg-secondary" id="comunicacionSiat" style="color: white;">Desconectado</span>
             <span class="badge bg-secondary" id="cuis">CUIS: Inexistente</span>
@@ -361,6 +363,7 @@
                 </div>
             </div>
         </div>
+    </div>
 
     </main>
 </template>

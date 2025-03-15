@@ -1,5 +1,7 @@
 <template>
         <main class="main">
+            <div class="p-p-4 p-mx-auto" style="max-width: 100%;">
+
             <Panel header="Menu Completo" style="font-size: 1.5rem;" :toggleable="false">
                 <span class="badge bg-secondary" id="comunicacionSiat" style="color: white;" v-show="mostrarElementos">Desconectado</span>
                 <span class="badge bg-secondary" id="cuis" v-show="mostrarElementos">CUIS: Inexistente</span>
@@ -153,7 +155,49 @@
                                 </span>
                             </div>
                        
-                            <div class="p-col-6 p-md-6">
+                            
+                        </div>
+                        <div class="p-grid p-fluid align-items-stretch">
+                            <!--<div class="p-col-12 p-md-4 p-mt-4">
+                                <span class="p-float-label">
+                                <InputText id="mesero" type="text" v-model="usuario_autenticado" ref="mesero" class="p-inputtext-sm" readonly />
+                                <label for="mesero">Usuario</label>
+                                </span>
+                            </div>-->
+                            <!--<div class="p-col-12 p-md-4 p-mt-4">
+                                <span class="p-float-label">
+                                <Dropdown
+                                    class="p-inputtext-sm"
+                                    id="comprobante"
+                                    v-model="tipo_comprobante"
+                                    :options="lista_comprobantes"
+                                    optionLabel="name"
+                                    optionValue="code"
+                                    placeholder="Seleccione"
+                                />
+                                <label for="comprobante">Tipo Comprobante</label>
+                                </span>
+                            </div>-->
+
+                            <!--<div class="p-col-12 p-md-4 p-mt-4">
+                                <span class="p-float-label">
+                                <InputText id="numero-ticket" type="text" v-model="num_comprob" class="p-inputtext-sm" ref="numeroComprobanteRef" readonly />
+                                <label for="numero-ticket">Numero Comanda</label>
+                                </span>
+                            </div>-->
+
+                            <div class="p-col-6 p-md-6 buttons-container">
+                                <SelectButton v-model="tipo_entrega" :options="justifyOptions" optionLabel="label" optionValue="value" class="custom-select-button">
+                                    <template #option="slotProps">
+                                        <div class="custom-button-content">
+                                            <i :class="slotProps.option.icon"></i>
+                                            <span>{{ slotProps.option.label }}</span>
+                                        </div>
+                                    </template>
+                                </SelectButton>
+                            </div>
+
+                            <div class="p-col-6 p-md-6" v-if="['Afuera', 'Planta Alta', 'Planta Baja', 'Patio'].includes(tipo_entrega)">
                                 <span class="p-float-label">
                                     <Dropdown
                                         class="p-inputtext-sm"
@@ -168,12 +212,12 @@
                                 </span>
                             </div>
 
-                            <div class="p-col-12 p-md-4 p-mt-4">
+                            <!--<div class="p-col-12 p-md-4 p-mt-4">
                                 <span class="p-float-label">
                                     <InputText id="numero-factura" type="text" v-model="num_factura" class="p-inputtext-sm" ref="numeroFacturaRef" readonly />
                                     <label for="numero-factura">Numero Factura</label>
                                 </span>
-                            </div>
+                            </div>-->
                         </div>
 
                     <DataTable
@@ -453,6 +497,8 @@
                     </template>
 
             </Panel>
+        </div>
+
         </main>
 </template>
 
@@ -503,7 +549,8 @@ export default {
             currency: 'BOB', // Define tu moneda
 
             // primeVue variables
-            tipo_entrega: 'Aqui',
+            tipo_entrega: '',
+            tipoEntregaOptions: ['Llevar', 'Afuera', 'Patio', 'Planta Baja', 'Planta Alta'],            
             filas_dinamicas: 23,
             arrayCategoriasMenu: [],
             arrayCategoriasProducto: [],
@@ -535,9 +582,9 @@ export default {
             tipo_comprobante: 'FACTURA',
 
             justifyOptions: [
-                //{icon: 'pi pi-shopping-bag', label: 'Llevar', value: 'Llevar'},
-                {icon: 'pi pi-user', label: 'Aqui', value: 'Aqui'}
-                //{icon: 'pi pi-car', label: 'Delivery', value: 'Entregas'}
+                {icon: 'pi pi-shopping-bag', label: 'Llevar', value: 'Llevar'},
+                {icon: 'pi pi-map-marker', label: 'Adentro', value: 'Afuera'},
+                {icon: 'pi pi-home', label: 'Patio', value: 'Patio'},
             ],
 
             categorias_lista: [
@@ -570,7 +617,7 @@ export default {
                 }
             ],
             id_sucursal_actual: '1',
-            categoria_general: 'bebidas',
+            categoria_general: 'comidas',
             arraySucursal: [],
             arrayAlmacen: [],
 
@@ -1802,15 +1849,6 @@ export default {
                 return;
             }
 
-            let tipoEntregaValor;
-            if (this.tipo_entrega === 'Aqui') {
-                tipoEntregaValor = 'M';
-            } else if (this.tipo_entrega === 'Llevar') {
-                tipoEntregaValor = 'L';
-            } else if (this.tipo_entrega === 'Entregas') {
-                tipoEntregaValor = 'D';
-            }
-
             this.mostrarSpinner = true;
             this.idtipo_pago = idtipo_pago;
 
@@ -1850,7 +1888,7 @@ export default {
                     'cliente': this.cliente,
                     'documento': this.documento,
                     'tipoEntrega': idMesa,
-                    'observacion': this.observacion,
+                    'observacion': this.tipo_entrega,
                     'numero_cuotasCredito': this.numero_cuotas,
                     'tiempo_dias_cuotaCredito': this.tiempo_diaz,
                     'totalCredito': this.primera_cuota ? this.calcularTotal - this.cuotas[0].totalCancelado : this.calcularTotal,
@@ -1875,15 +1913,15 @@ export default {
                         this.visibleDialog = false;
                         this.cambiar_pagina = 0;
                         this.ejecutarFlujoCompleto();
-                        //this.listarMenu();
-                        this.listarProducto(this.buscar, this.criterio, this.id_sucursal_actual);
+                        this.listarMenu();
+                        //this.listarProducto(this.buscar, this.criterio, this.id_sucursal_actual);
 
                         swal(
                             'VENTA REALIZADA',
                             'Correctamente',
                             'success'
                         )
-                        this.categoria_general = 'bebidas'
+                        this.categoria_general = 'comidas'
                         this.idtipo_pago = '';
                         this.email = 'trotamundos.rockpopbar.cba@gmail.com';
                         this.recibido = '';
@@ -1919,11 +1957,11 @@ export default {
                         this.visibleDialog = false;
                         this.cambiar_pagina = 0;
                         this.ejecutarFlujoCompleto();
-                        //this.listarMenu();
-                        this.listarProducto(this.buscar, this.criterio, this.id_sucursal_actual);
+                        this.listarMenu();
+                        //this.listarProducto(this.buscar, this.criterio, this.id_sucursal_actual);
 
         
-                        this.categoria_general = 'bebidas'
+                        this.categoria_general = 'comidas'
                         this.idtipo_pago = '';
                         this.email = 'trotamundos.rockpopbar.cba@gmail.com';
                         this.numeroTarjeta =  null;
@@ -2358,7 +2396,8 @@ export default {
 
         window.addEventListener('keydown', this.atajoButton);
         //this.obtenerDatosUsuario();
-        
+        this.listarMenu();
+
         //this.listarProducto(1, this.buscar, this.criterio);
         //this.getCategoriasMenu();
         //this.getCategoriasProductos();
@@ -2372,8 +2411,7 @@ export default {
         this.selectSucursal();
         this.listarAlmacenes();
         this.ejecutarFlujoCompleto();
-        //this.listarMenu();
-        this.listarProducto(this.buscar, this.criterio, this.id_sucursal_actual);
+        //this.listarProducto(this.buscar, this.criterio, this.id_sucursal_actual);
         this.obtenerNumeroFactura();
         this.listarMesas();
     },

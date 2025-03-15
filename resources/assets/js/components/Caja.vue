@@ -1,5 +1,6 @@
 <template>
-    <main class="main">
+        <main class="main">
+            <div class="p-p-4 p-mx-auto" style="max-width: 100%;">
         <Panel header="Menu Completo" style="font-size: 1.5rem;" :toggleable="false">
                 <template #header>
                     <Button label="New" icon="pi pi-plus" class="p-button-sm p-button-success mr-2" @click="abrirDialogCaja" />
@@ -453,6 +454,7 @@
         </template>
     </Dialog>
 </Panel>
+</div>
 
     </main>
 </template>

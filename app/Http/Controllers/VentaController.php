@@ -2638,6 +2638,7 @@ public function imprimirTicket($id)
                 'ventas.num_comprobante',
                 'ventas.created_at',
                 'ventas.impuesto',
+                'ventas.observacion',
                 'ventas.total',
                 'ventas.estado',
                 'users.usuario',
@@ -2665,20 +2666,6 @@ public function imprimirTicket($id)
             return response()->json(['error' => 'NO SE ENCONTRÓ LA EMPRESA'], 404);
         }
 
-
-        // Mapeo para tipo_entrega
-        switch ($venta->tipoEntrega) {
-            case 'L':
-                $venta->tipoEntrega = 'Llevar';
-                break;
-            case 'D':
-                $venta->tipoEntrega = 'Delivery';
-                break;
-            default:
-                $venta->tipoEntrega = 'Mesa';
-                break;
-        }
-
         // Mapeo para tipo_venta
         switch ($venta->Tipo_venta) {
             case 1:
@@ -2699,6 +2686,7 @@ public function imprimirTicket($id)
                 'detalle_ventas.cantidad',
                 'detalle_ventas.precio',
                 'detalle_ventas.descuento',
+                'detalle_ventas.observaciones',
                 DB::raw('CASE WHEN detalle_ventas.codigoComida IN (SELECT codigo FROM articulos) THEN articulos.nombre 
                             WHEN detalle_ventas.codigoComida IN (SELECT codigo FROM menu) THEN menu.nombre 
                             ELSE NULL 
@@ -2715,7 +2703,7 @@ public function imprimirTicket($id)
         // Crear el PDF
         $pdf = new FPDF('P', 'mm', array(80, 250));
         $pdf->SetAutoPageBreak(true, 10);
-        $pdf->SetMargins(10, 10);
+        $pdf->SetMargins(3, 3);
         $pdf->AddPage();
 
         // Agregar encabezado y detalles del recibo
@@ -2725,8 +2713,8 @@ public function imprimirTicket($id)
         $pdf->Cell(0, 7, 'No. ' . $venta->num_comprobante, 0, 1, 'C');
         $pdf->SetFont('Arial', '', 8);
         $pdf->Cell(0, 5, utf8_decode(strtoupper($empresa->nombre)), 0, 1, 'C');
-        $pdf->Cell(0, 5, utf8_decode(strtoupper($empresa->direccion)), 0, 1, 'C');
-        $pdf->Cell(0, 5, utf8_decode(strtoupper('TELÉFONO: ' . $empresa->telefono)), 0, 1, 'C');
+        //$pdf->Cell(0, 5, utf8_decode(strtoupper($empresa->direccion)), 0, 1, 'C');
+        //$pdf->Cell(0, 5, utf8_decode(strtoupper('TELÉFONO: ' . $empresa->telefono)), 0, 1, 'C');
         //$pdf->Cell(0, 5, 'Telefono: 79757720', 0, 1, 'C');
 
         // Línea de separación
@@ -2735,15 +2723,33 @@ public function imprimirTicket($id)
 
         // Fecha y hora
         $pdf->Ln(2);
-        $pdf->SetFont('Arial', '', 7);
-        $pdf->Cell(0, 5, 'Fecha: ' . date('d/m/Y', strtotime($venta->created_at)), 0, 1);
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(18, 5, 'FECHA:', 0, 0);
+        $pdf->SetFont('Arial', '', 9);
+        $pdf->Cell(0, 5, date('d/m/Y H:i', strtotime($venta->created_at)), 0, 1);
         //$pdf->Cell(0, 5, 'Hora: ' . date('H:i:s', strtotime($venta->created_at)), 0, 1);
-        $pdf->Cell(0, 5, 'MESA: ' . $venta->nombremesa, 0, 1);
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(18, 5, 'LUGAR:', 0, 0);
+        $pdf->SetFont('Arial', '', 9);
+        $lugarMesaContent = $venta->observacion;
+        $pdf->Cell(20, 5, $lugarMesaContent, 0, 0);
+
+   
+            if ($venta->nombremesa !== null) {
+                $pdf->SetFont('Arial', 'B', 9);
+                $pdf->Cell(13, 5, 'MESA:', 0, 0);
+                $pdf->SetFont('Arial', '', 9);
+                $pdf->Cell(0, 5, $venta->nombremesa, 0, 1);
+            } else {
+                $pdf->Ln(5);
+            }
 
 
         // Agregar detalles del cliente
-        $pdf->Cell(0, 5, 'Cliente: ' . $venta->cliente, 0, 1);
-        $pdf->Cell(0, 5, 'Doc: ' . $venta->documento, 0, 1);
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(18, 5, 'CLIENTE:', 0, 0);
+        $pdf->SetFont('Arial', '', 9);
+        $pdf->Cell(0, 5, $venta->cliente, 0, 1);        //$pdf->Cell(0, 5, 'Doc: ' . $venta->documento, 0, 1);
 
         // Línea de separación
         $pdf->Ln(2);
@@ -2751,18 +2757,29 @@ public function imprimirTicket($id)
 
         // Agregar detalles de los productos comprados
         $pdf->Ln(2);
-        $pdf->SetFont('Arial', 'B', 8);
-        $pdf->Cell(40, 5, 'Producto', 0, 0);
-        $pdf->Cell(15, 5, 'Cant', 0, 0, 'L');
-        $pdf->Cell(25, 5, 'Precio', 0, 1, 'L');
-        $pdf->SetFont('Arial', '', 8);
+        $pdf->SetFont('Arial', 'B', 9);
+            $pdf->Cell(0, 5, 'DETALLE DE COMANDA', 0, 1, 'C');
+            $pdf->SetFont('Arial', 'B', 9);
+            $pdf->Cell(11, 5, 'CANT', 0, 0, 'L');
+            $pdf->Cell(38, 5, 'PRODUCTO', 0, 0);
+            $pdf->Cell(25, 5, 'PRECIO', 0, 1, 'R');
 
         foreach ($detalles as $detalle) {
-            $nombreProducto = substr($detalle->comida_nombre, 0, 15); // Limitar la longitud del nombre del producto
+            $nombreProducto = substr(utf8_decode($detalle->comida_nombre), 0, 45);
             $precioprodtotal = ($detalle->cantidad * $detalle->precio);
-            $pdf->Cell(40, 5, $nombreProducto, 0, 0);
-            $pdf->Cell(15, 5, $detalle->cantidad, 0, 0, 'L');
-            $pdf->Cell(25, 5, number_format($precioprodtotal, 2), 0, 1, 'L');
+            $pdf->SetFont('Arial', '', 9);
+            $pdf->Cell(11, 5, $detalle->cantidad, 0, 0, 'L');
+            $pdf->SetFont('Arial', 'B', 9);
+            $pdf->Cell(38, 5, $nombreProducto, 0, 0);
+            $pdf->SetFont('Arial', '', 9);
+            $pdf->Cell(25, 5, number_format($precioprodtotal, 2), 0, 1, 'R');
+            if (strtolower($detalle->observaciones) !== 'ninguna') {
+                $pdf->SetFont('Arial', 'B', 9);
+                $pdf->Cell(11, 5, '', 0, 0);
+                $pdf->Cell(23, 5, utf8_decode('Observación:'), 0, 0);
+                $pdf->SetFont('Arial', '', 9);
+                $pdf->Cell(0, 5, utf8_decode($detalle->observaciones), 0, 1);
+            }
         }
 
         // Línea de separación
@@ -2772,11 +2789,11 @@ public function imprimirTicket($id)
         // Total
         $pdf->Ln(2);
         $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(40, 7, 'TOTAL', 0, 0);
-        $pdf->Cell(40, 7, number_format($venta->total, 2), 0, 1, 'L');
+        $pdf->Cell(50, 7, 'TOTAL:', 0, 0, 'R'); // Mover "TOTAL" hacia la derecha
+        $pdf->Cell(20, 7, number_format($venta->total, 2), 0, 1, 'R'); // Mover el valor total más cerca y hacia la derecha
 
         // Tipo de pago
-        $pdf->SetFont('Arial', '', 8);
+        $pdf->SetFont('Arial', 'B', 9);
         $pdf->Cell(0, 5, 'Tipo de pago: ' . $venta->Tipo_venta, 0, 1);
 
         // Línea de separación
@@ -2831,6 +2848,7 @@ public function imprimirTicketEventos($id)
                 'ventas.created_at',
                 'ventas.impuesto',
                 'ventas.total',
+                'ventas.observacion',
                 'ventas.estado',
                 'users.usuario',
                 'ventas.tipoEntrega',
@@ -2846,20 +2864,6 @@ public function imprimirTicketEventos($id)
             return response()->json(['error' => 'No se encontró la venta'], 500);
         }
 
-        
-
-        // Mapeo para tipo_entrega
-        switch ($venta->tipoEntrega) {
-            case 'L':
-                $venta->tipoEntrega = 'Llevar';
-                break;
-            case 'D':
-                $venta->tipoEntrega = 'Delivery';
-                break;
-            default:
-                $venta->tipoEntrega = 'Mesa';
-                break;
-        }
 
         // Mapeo para tipo_venta
         switch ($venta->Tipo_venta) {
@@ -2891,6 +2895,7 @@ public function imprimirTicketEventos($id)
                 'detalle_ventas.cantidad',
                 'detalle_ventas.precio',
                 'detalle_ventas.descuento',
+                'detalle_ventas.observaciones',
                 DB::raw('CASE WHEN detalle_ventas.codigoComida IN (SELECT codigo FROM articulos) THEN articulos.nombre 
                             WHEN detalle_ventas.codigoComida IN (SELECT codigo FROM menu) THEN menu.nombre 
                             ELSE NULL 
@@ -2907,15 +2912,16 @@ public function imprimirTicketEventos($id)
         // Crear el PDF
         $pdf = new FPDF('P', 'mm', array(80, 250));
         $pdf->SetAutoPageBreak(true, 10);
-        $pdf->SetMargins(10, 10);
+        $pdf->SetMargins(3, 3);
         $pdf->AddPage();
 
         // Agregar encabezado y detalles del recibo
         $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(0, 7, 'COMANDA', 0, 1, 'C');
+        $pdf->Cell(0, 7, 'NOTA DE VENTA', 0, 1, 'C');
         $pdf->SetFont('Arial', 'B', 9);
+        
         $pdf->Cell(0, 7, 'No. ' . $venta->num_comprobante, 0, 1, 'C');
-        $pdf->SetFont('Arial', '', 8);
+        $pdf->SetFont('Arial', 'B', 8);
         $pdf->Cell(0, 5, utf8_decode(strtoupper($empresa->nombre)), 0, 1, 'C');
         $pdf->Cell(0, 5, utf8_decode(strtoupper($empresa->direccion)), 0, 1, 'C');
         $pdf->Cell(0, 5, utf8_decode(strtoupper('TELÉFONO: ' . $empresa->telefono)), 0, 1, 'C');
@@ -2926,13 +2932,37 @@ public function imprimirTicketEventos($id)
 
         // Fecha y hora
         $pdf->Ln(2);
-        $pdf->SetFont('Arial', '', 8);
-        $pdf->Cell(0, 5, 'FECHA: ' . date('d/m/Y', strtotime($venta->created_at)), 0, 1);
-        //$pdf->Cell(0, 5, 'Hora: ' . date('H:i:s', strtotime($venta->created_at)), 0, 1);
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(18, 5, 'FECHA:', 0, 0);
+        $pdf->SetFont('Arial', '', 9);
+        $pdf->Cell(0, 5, date('d/m/Y H:i', strtotime($venta->created_at)), 0, 1);
 
         // Agregar detalles del cliente
-        $pdf->Cell(0, 5, 'MESA: ' . $venta->nombremesa, 0, 1);
-        $pdf->Cell(0, 5, utf8_decode(strtoupper('CLIENTE: ' . $persona->nombre)), 0, 1);
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(18, 5, 'CLIENTE:', 0, 0);
+        $pdf->SetFont('Arial', '', 9);
+        $pdf->Cell(0, 5, $venta->cliente, 0, 1);
+
+
+        if ($venta->documento !== null) {
+            $pdf->SetFont('Arial', 'B', 9);
+            $pdf->Cell(18, 5, 'CI/NIT:', 0, 0);
+            $pdf->SetFont('Arial', '', 9);
+            $pdf->Cell(0, 5, $venta->documento, 0, 1);
+        }
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(18, 5, 'LUGAR:', 0, 0);
+            $pdf->SetFont('Arial', '', 9);
+            $lugarMesaContent = $venta->observacion;
+            $pdf->Cell(20, 5, $lugarMesaContent, 0, 0);
+            if ($venta->nombremesa !== null) {
+                $pdf->SetFont('Arial', 'B', 9);
+                $pdf->Cell(13, 5, 'MESA:', 0, 0);
+                $pdf->SetFont('Arial', '', 9);
+                $pdf->Cell(0, 5, $venta->nombremesa, 0, 1);
+            } else {
+                $pdf->Ln(5);
+            }
 
 
         // Línea de separación
@@ -2941,18 +2971,30 @@ public function imprimirTicketEventos($id)
 
         // Agregar detalles de los productos comprados
         $pdf->Ln(2);
-        $pdf->SetFont('Arial', 'B', 8);
-        $pdf->Cell(40, 5, 'Producto', 0, 0);
-        $pdf->Cell(15, 5, 'Cant', 0, 0, 'L');
-        $pdf->Cell(25, 5, 'Precio', 0, 1, 'L');
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(40, 5, 'PRODUCTO', 0, 0);
+        $pdf->Cell(15, 5, 'CANT', 0, 0, 'R');
+        $pdf->Cell(25, 5, 'PRECIO', 0, 1, 'L');
         $pdf->SetFont('Arial', '', 8);
 
         foreach ($detalles as $detalle) {
-            $nombreProducto = substr($detalle->comida_nombre, 0, 15); // Limitar la longitud del nombre del producto
+            $nombreProducto = substr(utf8_decode($detalle->comida_nombre), 0, 45); // Limitar la longitud del nombre del producto con decodificación
             $precioprodtotal = ($detalle->cantidad * $detalle->precio);
+            
+            // Nombre de la comida en negrita
+            $pdf->SetFont('Arial', 'B', 9);
             $pdf->Cell(40, 5, $nombreProducto, 0, 0);
-            $pdf->Cell(15, 5, $detalle->cantidad, 0, 0, 'L');
+            $pdf->SetFont('Arial', '', 9);
+            $pdf->Cell(15, 5, $detalle->cantidad, 0, 0, 'R');
             $pdf->Cell(25, 5, number_format($precioprodtotal, 2), 0, 1, 'L');
+             // Mostrar la observación si no es "ninguna"
+             if (strtolower($detalle->observaciones) !== 'ninguna') {
+                $pdf->SetFont('Arial', 'B', 9);
+                $pdf->Cell(3, 5, '', 0, 0); // Espacio para sangría
+                $pdf->Cell(23, 5, utf8_decode('Observación:'), 0, 0);
+                $pdf->SetFont('Arial', '', 9);
+                $pdf->Cell(0, 5, utf8_decode($detalle->observaciones), 0, 1);
+            }
         }
 
         // Línea de separación
@@ -2961,13 +3003,14 @@ public function imprimirTicketEventos($id)
 
         // Total
         $pdf->Ln(2);
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(40, 7, 'TOTAL', 0, 0);
-        $pdf->Cell(40, 7, number_format($venta->total, 2), 0, 1, 'L');
 
-        // Tipo de pago
-        $pdf->SetFont('Arial', '', 8);
-        $pdf->Cell(0, 5, 'Tipo de pago: ' . $venta->Tipo_venta, 0, 1);
+        $pdf->SetFont('Arial', 'B', 10);
+        $pdf->Cell(50, 7, 'TOTAL:', 0, 0, 'R'); // Mover "TOTAL" hacia la derecha
+        $pdf->Cell(20, 7, number_format($venta->total, 2), 0, 1, 'R'); // Mover el valor total más cerca y hacia la derecha
+
+        $pdf->SetFont('Arial', 'B', 8);
+        $pdf->Cell(0, 5, 'TIPO PAGO: ' . $venta->Tipo_venta, 0, 1);
+
 
         // Línea de separación
         $pdf->Ln(2);
@@ -3397,7 +3440,7 @@ public function imprimirResivoRollo($id)
         return response()->download(public_path('docs/facturaCarta.pdf'));
     }
 
-    public function imprimirFacturaRollo($id, $correo)
+    public function imprimirFacturaRolloCorreo($id, $correo)
     {
         $user = Auth::user();
         $codigoPuntoVenta = '';
@@ -3627,6 +3670,239 @@ public function imprimirResivoRollo($id)
         $xmlPath = public_path("docs/facturaxml.xml");
     
         \Mail::to($correo)->send(new \App\Mail\FacturaElectrónica($xmlPath, $pdfPath));
+    
+        return response()->json(['url' => url('docs/facturaRollo.pdf')]);
+    }
+    public function imprimirFacturaRollo($id)
+    {
+        $user = Auth::user();
+        $codigoPuntoVenta = '';
+        if (!empty($user->idpuntoventa)) {
+            $puntoVenta = PuntoVenta::find($user->idpuntoventa);
+            if ($puntoVenta) {
+                $codigoPuntoVenta = $puntoVenta->codigoPuntoVenta;
+            }
+        }
+
+        //$puntoVenta = $user->idpuntoventa;
+        $puntoVenta = $codigoPuntoVenta;
+
+        $facturas = Factura::join('ventas', 'facturas.idventa', '=', 'ventas.id')
+        ->select('facturas.*','ventas.cliente as razonSocial', 'ventas.documento as documentoid')
+        ->where('facturas.id', '=', $id)
+        ->orderBy('facturas.id', 'desc')->paginate(3);
+        
+        Log::info('Resultado', [
+            //'facturas' => $facturas,
+            'idFactura' => $id,
+        ]);
+
+        //dd($facturas);
+
+        $xml = $facturas[0]->productos;
+        $archivoXML = new SimpleXMLElement($xml);
+        $nitEmisor = $archivoXML->cabecera[0]->nitEmisor;
+        $numeroFactura = str_pad($archivoXML->cabecera[0]->numeroFactura, 5, "0", STR_PAD_LEFT);
+        $cuf = $archivoXML->cabecera[0]->cuf;
+        $direccion = $archivoXML->cabecera[0]->direccion;
+        $telefono = $archivoXML->cabecera[0]->telefono;
+        $municipio = $archivoXML->cabecera[0]->municipio;
+        $fechaEmision = $archivoXML->cabecera[0]->fechaEmision;
+        $fechaFormateada = date("d/m/Y h:i A", strtotime($fechaEmision));
+        $documentoid = $archivoXML->cabecera[0]->numeroDocumento;
+        $razonSocial = $archivoXML->cabecera[0]->nombreRazonSocial;
+        $codigoCliente = $archivoXML->cabecera[0]->codigoCliente;
+        $montoTotal1 = $archivoXML->cabecera[0]->montoTotal;
+        $montoGiftCard = $archivoXML->cabecera[0]->montoGiftCard;
+        $descuentoAdicional = $archivoXML->cabecera[0]->descuentoAdicional;
+        $leyenda = $archivoXML->cabecera[0]->leyenda;
+        $complementoid = $archivoXML->cabecera[0]->complemento;
+
+        $montoTotal = ($montoTotal1-$montoGiftCard);
+        $totalpagar = number_format(floatval($montoTotal), 2);
+        $totalpagar = str_replace(',', '', $totalpagar);
+        $totalpagar = str_replace('.', ',', $totalpagar);
+        $cifrasEnLetras = new CifrasEnLetrasController();
+        $letra = ($cifrasEnLetras->convertirBolivianosEnLetras($totalpagar));
+
+
+        $url = 'https://pilotosiat.impuestos.gob.bo/consulta/QR?nit=' . $nitEmisor . '&cuf=' . $cuf . '&numero=' . $numeroFactura . '&t=2';
+        $options = new QROptions([
+            'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+            'imageBase64' => false,
+            'scale' => 10,
+        ]);
+        $qrCode = new QRCode($options);
+        $qrCode->render($url, public_path('qr/qrcode.png'));
+
+        //$pdf = new FPDF('P', 'mm', array(80, 0));
+        $pdf = new FPDF('P', 'mm', array(80, 250));
+        //$pdf = new FPDF();
+
+        $pdf->SetAutoPageBreak(true, 10);
+        $pdf->SetMargins(10, 10);
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(0, 3, 'FACTURA', 0, 1, 'C');
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(0, 3, utf8_decode('CON DERECHO A CRÉDITO FISCAL'), 0, 1, 'C');
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(0, 3, utf8_decode('MARIETA ANTEZANA GARCIA'), 0, 1, 'C');
+        $pdf->Cell(0, 3, utf8_decode('Casa Matriz'), 0, 1, 'C');
+        $pdf->Cell(0, 3, utf8_decode('No. Punto de Venta '.$puntoVenta), 0, 1, 'C');
+
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->MultiCell(0, 3, utf8_decode($direccion), 0, 'C');
+
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(0, 3, utf8_decode('Tel. ' . $telefono), 0, 1, 'C');
+        $pdf->Cell(0, 3, utf8_decode($municipio), 0, 1, 'C');
+
+        $y = $pdf->GetY();
+        $pdf->SetY($y + 2);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetDrawColor(0, 0, 0);
+        $pdf->Cell(0, 3, '', 'T', 1, 'C');
+
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(0, 3, 'NIT', 0, 1, 'C');
+        $pdf->SetFont('Arial', '', 6);
+        //$pdf->Cell(0, 3, utf8_decode($documentoid."-".$complementoid), 0, 1, 'C');
+        $pdf->Cell(0, 3, utf8_decode($nitEmisor), 0, 1, 'C');
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(0, 3, utf8_decode('FACTURA N°'), 0, 1, 'C');
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(0, 3, utf8_decode($numeroFactura), 0, 1, 'C');
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(0, 3, utf8_decode('CÓD. AUTORIZACIÓN'), 0, 1, 'C');
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->MultiCell(0, 3, utf8_decode($cuf), 0, 'C');
+
+        $y = $pdf->GetY();
+        $pdf->SetY($y + 2);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetDrawColor(0, 0, 0);
+        $pdf->Cell(0, 3, '', 'T', 1, 'C');
+
+        $spacing = 2;
+
+        $pdf->SetX(($pdf->GetPageWidth() - $pdf->GetStringWidth('NOMBRE/RAZON SOCIAL:') - $pdf->GetStringWidth($razonSocial)) / 2);
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(10, 3, 'NOMBRE/RAZON SOCIAL:', 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + $spacing);
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(0, 3, utf8_decode($razonSocial), 0, 1, 'C');
+
+        $spacingBetweenColumns = 10;
+        $pdf->SetX(($pdf->GetPageWidth() - $pdf->GetStringWidth('NIT/CI/CEX:') - $pdf->GetStringWidth($documentoid)) / 2);
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(2.5, 3, 'NIT/CI/CEX:', 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + $spacingBetweenColumns);
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(5.5, 3, utf8_decode($documentoid), 0, 1, 'C');
+
+        $spacingBetweenColumns = 10;
+        $pdf->SetX(($pdf->GetPageWidth() - $pdf->GetStringWidth('COD. CLIENTE:') - $pdf->GetStringWidth($codigoCliente)) / 2);
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(2.5, 3, 'COD. CLIENTE:', 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + $spacingBetweenColumns);
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(9, 3, utf8_decode($codigoCliente), 0, 1, 'C');
+
+        $spacingBetweenColumns = 10;
+        $pdf->SetX(($pdf->GetPageWidth() - $pdf->GetStringWidth('FECHA DE EMISIÓN:') - $pdf->GetStringWidth($fechaEmision)) / 2);
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(21.5, 3, utf8_decode('FECHA DE EMISIÓN:'), 0, 0, 'C');
+        $pdf->SetX($pdf->GetX() + $spacingBetweenColumns);
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(10, 3, utf8_decode($fechaFormateada), 0, 1, 'C');
+
+        $y = $pdf->GetY();
+        $pdf->SetY($y + 2);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetDrawColor(0, 0, 0);
+        $pdf->Cell(0, 3, '', 'T', 1, 'C');
+
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(0, 3, 'DETALLE', 0, 1, 'C');
+
+        $detalle = $archivoXML->detalle;
+        $sumaSubTotales = 0.0;
+        foreach ($detalle as $p) {
+            $pdf->SetFont('Arial', 'B', 6);
+            $pdf->Cell(0, 3, $p->codigoProducto . " - " . $p->descripcion, 0, 1, 'L');
+
+            $medida = $p->unidadMedida;
+            $nombreMedida = Medida::where('codigoClasificador', $medida)->value('descripcion_medida');
+
+            $pdf->SetFont('Arial', '', 6);
+            $pdf->Cell(0, 3, "Unidad de Medida: " . $nombreMedida, 0, 1, 'L');
+            $pdf->Cell(0, 3, number_format(floatval($p->cantidad), 2) . " X " . number_format(floatval($p->precioUnitario), 2) . " - " . number_format(floatval($p->montoDescuento), 2), 0, 0, 'L');
+            $pdf->Cell(0, 3, number_format(floatval($p->subTotal), 2), 0, 1, 'R');
+
+            $sumaSubTotales += floatval($p->subTotal);
+        }
+
+        $y = $pdf->GetY();
+        $pdf->SetY($y + 2);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetDrawColor(0, 0, 0);
+        $pdf->Cell(0, 3, '', 'T', 1, 'C');
+
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(0, 3, 'SUBTOTAL Bs', 0, 0, 'C');
+        $pdf->Cell(0, 3, number_format(floatval($sumaSubTotales), 2), 0, 1, 'R');
+        $pdf->Cell(0, 3, 'DESCUENTO Bs', 0, 0, 'C');
+        $pdf->Cell(0, 3, number_format(floatval($descuentoAdicional), 2), 0, 1, 'R');
+        $pdf->Cell(0, 3, 'TOTAL Bs', 0, 0, 'C');
+        $pdf->Cell(0, 3, number_format(floatval($montoTotal), 2), 0, 1, 'R');
+        $pdf->Cell(0, 3, 'MONTO GIFT CARD Bs', 0, 0, 'C');
+        $pdf->Cell(0, 3, number_format(floatval($montoGiftCard), 2), 0, 1, 'R');
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(0, 3, 'MONTO A PAGAR Bs', 0, 0, 'C');
+        $pdf->Cell(0, 3, number_format(floatval($montoTotal), 2), 0, 1, 'R');
+        $pdf->SetFont('Arial', 'B', 5);
+        $pdf->Cell(0, 3, utf8_decode('IMPORTE BASE CRÉDITO FISCAL Bs'), 0, 0, 'C');
+        $pdf->SetFont('Arial', 'B', 6);
+        $pdf->Cell(0, 3, number_format(floatval($montoTotal), 2), 0, 1, 'R');
+        $pdf->Ln(6);
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(0, 3, 'Son: ' . $letra, 0, 1, 'L');
+
+        $y = $pdf->GetY();
+        $pdf->SetY($y + 2);
+        $pdf->SetLineWidth(0.2);
+        $pdf->SetDrawColor(0, 0, 0);
+        $pdf->Cell(0, 3, '', 'T', 1, 'C');
+
+        $pdf->SetFont('Arial', '', 6);
+        $pdf->Cell(0, 3, utf8_decode('ESTA FACTURA CONTRIBUYE AL DESARROLLO DEL PAÍS,'), 0, 1, 'C');
+        $pdf->Cell(0, 3, utf8_decode('EL USO ILÍCITO SERÁ SANCIONADO PENALMENTE DE'), 0, 1, 'C');
+        $pdf->Cell(0, 3, utf8_decode('ACUERDO A LA LEY'), 0, 1, 'C');
+        $pdf->Ln(3);
+        $pdf->SetFont('Arial', '', 5);
+        $pdf->MultiCell(0, 3, utf8_decode($leyenda), 0, 'C');
+        $pdf->Ln(3);
+        $pdf->Cell(0, 3, utf8_decode('Este documento es la Representación Gráfica de un'), 0, 1, 'C');
+        $pdf->Cell(0, 3, utf8_decode('Documento Fiscal Digital emitido en una modalidad de'), 0, 1, 'C');
+        $pdf->Cell(0, 3, utf8_decode('facturación en línea'), 0, 1, 'C');
+        $pdf->Ln(3);
+
+        $textY = $pdf->GetY();
+
+        $imageWidth = 25;
+        $pageWidth = $pdf->GetPageWidth();
+        $imageX = ($pageWidth - $imageWidth) / 2;
+        $pdf->Image(public_path('qr/qrcode.png'), $imageX, $textY + 3, $imageWidth, 0, 'PNG');
+
+
+
+        $pdf->Output(public_path('docs/facturaRollo.pdf'), 'F');
+
+        $pdfPath = public_path('docs/facturaRollo.pdf');
+        $xmlPath = public_path("docs/facturaxml.xml");
+    
+        //\Mail::to($correo)->send(new \App\Mail\FacturaElectrónica($xmlPath, $pdfPath));
     
         return response()->json(['url' => url('docs/facturaRollo.pdf')]);
     }
