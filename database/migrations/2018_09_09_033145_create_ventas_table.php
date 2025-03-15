@@ -31,7 +31,7 @@ class CreateVentasTable extends Migration
             $table->dateTime('fecha_hora');
             $table->decimal('impuesto', 4, 2);
             $table->decimal('total', 11, 2);
-            $table->string('tipoEntrega', 30);
+            $table->string('tipoEntrega', 30)->nullable();
             $table->string('observacion', 350)->nullable();
             $table->string('estado', 20);
             $table->integer('idcaja')->unsigned();
