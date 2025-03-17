@@ -145,54 +145,58 @@ class MenuController extends Controller
     }
 
     public function update(Request $request)
-    {
+{
+    if (!$request->ajax())
+        return redirect('/');
 
-        if (!$request->ajax())
-            return redirect('/');
+    $menu = Menu::findOrFail($request->id);
+    
+    // Verifica si 'nombre' es null o una cadena vacía y asigna null
+    $menu->nombre = ($request->nombre === 'null' || $request->nombre === '') ? null : $request->nombre;
+    $menu->precio_venta = ($request->precio_venta === 'null' || $request->precio_venta === '') ? null : $request->precio_venta;
+    $menu->descripcion = ($request->descripcion === 'null' || $request->descripcion === '') ? null : $request->descripcion;
+    $menu->idcategoria_menu = ($request->idcategoria_menu === 'null' || $request->idcategoria_menu === '') ? null : $request->idcategoria_menu;
 
-        $menu = Menu::findOrFail($request->id);
-        $menu->nombre = $request->nombre;
-        $menu->precio_venta = $request->precio_venta;
-        $menu->descripcion = $request->descripcion;
-        $menu->idcategoria_menu = $request->idcategoria_menu;
-        //$menu->codigo = $request->codigo;
-        //$menu->idsucursal = $request->idsucursal;
+    //$menu->codigo = $request->codigo;
+    //$menu->idsucursal = $request->idsucursal;
 
-        $nombreimagen = " ";
-        if ($request->hasFile('fotografia')) {
-            // Eliminar imagen anterior si existe
-            if ($menu->fotografia != '' && Storage::exists('public/img/menu/' . $menu->fotografia)) {
-                Storage::delete('public/img/menu/' . $menu->fotografia);
-            }
-
-            $imagen = $request->file("fotografia");
-            $nombreimagen = Str::slug($request->nombre) . "." . $imagen->guessExtension();
-            $imagen->storeAs('public/img/menu', $nombreimagen);
-
-            $ruta = public_path("img/menu/");
-
-            // Copiar la imagen al directorio
-            //copy($imagen->getRealPath(), $ruta . $nombreimagen);
-            //$menu->fotografia = $nombreimagen;
-
-            $image = Image::make($imagen);
-
-            $width = $image->width();
-            $height = $image->height();
-
-            if ($height > $width) {
-                $image->fit(500, 500);
-            } else {
-                $image->fit(500, 500);
-            }
-
-            $image->save($ruta . $nombreimagen);
-
-            $menu->fotografia = $nombreimagen;
+    $nombreimagen = " ";
+    if ($request->hasFile('fotografia')) {
+        // Eliminar imagen anterior si existe
+        if ($menu->fotografia != '' && Storage::exists('public/img/menu/' . $menu->fotografia)) {
+            Storage::delete('public/img/menu/' . $menu->fotografia);
         }
-        $menu->save();
-        return response()->json($menu);
+
+        $imagen = $request->file("fotografia");
+        $nombreimagen = Str::slug($request->nombre) . "." . $imagen->guessExtension();
+        $imagen->storeAs('public/img/menu', $nombreimagen);
+
+        $ruta = public_path("img/menu/");
+
+        // Copiar la imagen al directorio
+        //copy($imagen->getRealPath(), $ruta . $nombreimagen);
+        //$menu->fotografia = $nombreimagen;
+
+        $image = Image::make($imagen);
+
+        $width = $image->width();
+        $height = $image->height();
+
+        if ($height > $width) {
+            $image->fit(500, 500);
+        } else {
+            $image->fit(500, 500);
+        }
+
+        $image->save($ruta . $nombreimagen);
+
+        $menu->fotografia = $nombreimagen;
     }
+
+    $menu->save();
+    return response()->json($menu);
+}
+
 
     public function desactivar(Request $request)
     {

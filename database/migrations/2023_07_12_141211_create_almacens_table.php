@@ -30,11 +30,11 @@ class CreateAlmacensTable extends Migration
 
         DB::table('almacens')->insert(array('id' => '1',
             'nombre_almacen' => 'Almacen principal',
-            'ubicacion' => 'Default Ubication',
+            'ubicacion' => 'Ubicación Predeterminada',
             'encargado' => '3',
             'sucursal' => '1',
             'telefono' => '78354613',
-            'observacion' => 'ninguna',
+            'observacion' => 'Ninguna',
             ));
     }
 

@@ -3,7 +3,7 @@
                 <ul class="nav">
 
                     <li @click="menu=42" class="nav-item">
-                        <a class="nav-link active" href="#"><i class="fa fa-dashboard"></i> Escritorio</a>
+                        <a class="nav-link active" href="#"><i class="fa fa-dashboard"></i> ESCRITORIO</a>
                     </li>
                     <li class="nav-title">
                         Operaciones

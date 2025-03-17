@@ -2,13 +2,13 @@
   <main class="main">
   <!-- Breadcrumb -->
   <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a class="text-decoration-none" href="/">Escritorio</a></li>
+      <!--<li class="breadcrumb-item"><a class="text-decoration-none" href="/">Escritorio</a></li>-->
   </ol>
   <div class="container-fluid">
       <!-- Ejemplo de tabla Listado -->
       <div class="card">
           <div class="card-header">
-              <i class="fa fa-align-justify"></i> Lista de Productos Servicios
+              <i class="fa fa-align-justify"></i> LISTA DE PRODUCTOS SERVICIOS
           </div>
           <div class="card-body">
             <div>

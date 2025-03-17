@@ -69,7 +69,8 @@
                                     <td v-text="articulo.nombre"></td>
                                     <td v-text="articulo.nombre_categoria"></td>
                                     <td v-text="articulo.precio_venta"></td>
-                                    <td v-text="articulo.descripcion"></td>
+                                    <td v-text="articulo.descripcion ? articulo.descripcion : 'Sin descripción'"></td>
+
                                     <td class="text-center">
                                         <img :src="articulo.imagenSrc"
                                             width="50" height="50" ref="imagen">
@@ -200,7 +201,7 @@
                         <div  class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                        <label class="form-control-label" for="text-input"><strong>Fotografia<span class="obligatorio">(Obligatorio)</span></strong></label>    
+                                        <label class="form-control-label" for="text-input"><strong>Imagen de la Comida<span class="obligatorio">(Obligatorio)</span></strong></label>    
                                         <div class="input-group">
                                             <input type="file" @change="obtenerFotografia" class="form-control"
                                             :class="{ 'border-red': fotografiaVacio }" 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\User;
+
 
 class LoginController extends Controller
 {
@@ -12,22 +14,42 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
-    public function login(Request $request){
-        $this->validateLogin($request);        
-    
-        if (Auth::attempt(['usuario' => $request->usuario,'password' => $request->password,'condicion'=>1])){       
-            $user = Auth::user();
-            $persona = $user->persona()->get();
-            $request->session()->put('fotografia', ($persona[0]->fotografia != '') ? $persona[0]->fotografia : 'defecto.jpg');
-            $request->session()->put('id', ($persona[0]->id));
+    public function login(Request $request)
+{
+    // Validación de campos vacíos
+    $request->validate([
+        'usuario' => 'required',
+        'password' => 'required',
+    ], [
+        'usuario.required' => 'Usuario requerido.',
+        'password.required' => 'Contraseña requerida.',
+    ]);
 
-            return redirect()->route('main');          
-        }
-    
+    // Buscar usuario por nombre de usuario
+    $user = User::where('usuario', $request->usuario)->first();
+
+    if (!$user) {
         return back()
-        ->withErrors(['usuario' => trans('auth.failed')])
-        ->withInput(request(['usuario']));
+            ->withErrors(['usuario' => 'Usuario no encontrado.'])
+            ->withInput($request->only('usuario'));
     }
+
+    // Verificar contraseña y condición del usuario
+    if (!Auth::attempt(['usuario' => $request->usuario, 'password' => $request->password, 'condicion' => 1])) {
+        return back()
+            ->withErrors(['password' => 'Contraseña incorrecta, intente de nuevo o comuníquese con el administrador.'])
+            ->withInput($request->only('usuario'));
+    }
+
+    // Si todo está bien, iniciar sesión y guardar datos en sesión
+    $user = Auth::user();
+    $persona = $user->persona()->first();
+    $request->session()->put('fotografia', $persona->fotografia ?: 'defecto.jpg');
+    $request->session()->put('id', $persona->id);
+
+    return redirect()->route('main');
+}
+
 
     protected function validateLogin(Request $request){
         $this->validate($request,[

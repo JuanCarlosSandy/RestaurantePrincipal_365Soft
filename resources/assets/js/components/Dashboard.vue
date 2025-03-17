@@ -38,14 +38,21 @@
             <div class="row d-flex justify-content-between">
                 <square-item :icono="'fa fa-usd'" :titulo="'Ventas'" :moneda="'BS'"
                     :cantidad="(sumaVentas).toFixed(2)"
-                    :fondoDegradado="'linear-gradient(35deg, #028bd2, #6dd3dd)'" />
+                    :fondoDegradado="'linear-gradient(35deg, #028bd2, #6dd3dd)'"/>
+                
                 <square-item :icono="'fa fa-shopping-cart'" :titulo="'Gastos'" :moneda="'BS'"
                     :cantidad="(sumaCompras).toFixed(2)"
-                    :fondoDegradado="'linear-gradient(35deg, #f67318, #f9ca38)'" />
-                <square-item :icono="'fa fa-angle-double-up'" :titulo="'Ganancias'" :moneda="'BS'"
-                    :cantidad="sumaVentas - sumaCompras" :fondoDegradado="'linear-gradient(35deg, #3b9c3f, #41d445)'" />
-
+                    :fondoDegradado="'linear-gradient(35deg, #f67318, #f9ca38)'"/>
+                
+                <square-item v-if="(sumaVentas - sumaCompras) >= 0" :icono="'fa fa-angle-double-up'" :titulo="'Ganancias'" :moneda="'BS'"
+                    :cantidad="(sumaVentas - sumaCompras).toFixed(2)"
+                    :fondoDegradado="'linear-gradient(35deg, #3b9c3f, #41d445)'"/>
+                
+                <square-item v-else :icono="'fa fa-angle-double-up'" :titulo="'Ganancias'" :moneda="'BS'"
+                    :cantidad="'No hay ganancias'"
+                    :fondoDegradado="'linear-gradient(35deg, #3b9c3f, #41d445)'"/>
             </div>
+
 
             <div class="">
 

@@ -19,17 +19,19 @@
                 <br>
 
                 <div class="container-input">
-                    <input type="text" value="{{old('usuario')}}" name="usuario" id="usuario" class="input-texto-arriba" placeholder="Usuario">
-                    <div class="message">
-                    {!!$errors->first('usuario','<span class="invalid-feedback">El campo Usuario es obligatorio.</span>')!!}
-                    </div>
-                </div>
-                <div class="container-input">
-                    <input type="password" name="password" id="password" class="input-texto-arriba" placeholder="Contraseña">
-                    <div class="message">
-                        {!!$errors->first('password','<span class="invalid-feedback">El campo Contraseña es obligatorio</span>')!!}
-                    </div>
-                </div>
+                  <input type="text" value="{{ old('usuario') }}" name="usuario" id="usuario" class="input-texto-arriba" placeholder="Usuario">
+                  <div class="message">
+                      {!! $errors->first('usuario', '<span class="invalid-feedback">:message</span>') !!}
+                  </div>
+              </div>
+
+              <div class="container-input">
+                  <input type="password" name="password" id="password" class="input-texto-arriba" placeholder="Contraseña">
+                  <div class="message">
+                      {!! $errors->first('password', '<span class="invalid-feedback">:message</span>') !!}
+                  </div>
+              </div>
+
                 <br>
                 <div class="container-input">
                     <button type="submit">Ingresar</button>

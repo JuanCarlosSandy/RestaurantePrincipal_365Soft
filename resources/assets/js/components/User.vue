@@ -50,23 +50,22 @@
                         </thead>
                         <tbody>
                             <tr v-for="persona in arrayPersona" :key="persona.id">
-                                <td class="text-center">
-                                    <img :src="'img/usuarios/' + persona.fotografia + '?t=' + new Date().getTime()" width="50" height="50"
-                                        v-if="persona.fotografia" ref="imagen">
-                                    <!--img :src="'img/usuarios/' + persona.fotografia" width="50" height="50"
-                                        v-if="persona.fotografia" ref="imagen"-->
-                                    <img :src="'img/usuarios/' + 'defecto.jpg'" width="50" height="50" v-else ref="imagen">
-                                </td>
-                                <td v-text="persona.nombre"></td>
-                                <td v-text="getTipoDocumentoText(persona.tipo_documento)"></td>
-                                <td v-text="persona.num_documento"></td>
-                                <td v-text="persona.telefono"></td>
-                                <td v-text="persona.email"></td>
-                                <td v-text="persona.usuario"></td>
-                                <td v-text="persona.rol"></td>
-                                <td v-text="persona.sucursal"></td>
-                                <td>
-                                    <button type="button" @click="abrirModal('persona', 'actualizar', persona)"
+                    <td class="text-center">
+                        <img :src="'img/usuarios/' + persona.fotografia + '?t=' + new Date().getTime()" width="50" height="50"
+                            v-if="persona.fotografia && persona.fotografia !== 'null'" ref="imagen">
+                        <img :src="'img/usuarios/defecto.jpg'" width="50" height="50" v-else ref="imagen">
+                    </td>
+                    <td v-text="persona.nombre || 'Sin Nombre'"></td>
+                    <td v-text="persona.tipo_documento && persona.tipo_documento !== 'null' ? persona.tipo_documento : 'Sin Tipo de Documento'"></td>
+                    <td v-text="persona.num_documento && persona.num_documento !== 'null' ? persona.num_documento : 'Sin Número de Documento'"></td>
+                    <td v-text="persona.telefono && persona.telefono !== 'null' ? persona.telefono : 'Sin Teléfono'"></td>
+                    <td v-text="persona.email && persona.email !== 'null' ? persona.email : 'Sin Email'"></td>
+                    <td v-text="persona.usuario || 'Sin Usuario'"></td>
+                    <td v-text="persona.rol || 'Sin Rol'"></td>
+                    <td v-text="persona.sucursal || 'Sin Sucursal'"></td>
+                    <td>
+                        <!-- Opciones aquí -->
+                                            <button type="button" @click="abrirModal('persona', 'actualizar', persona)"
                                         class="btn btn-warning btn-sm">
                                         <i class="icon-pencil"></i>
                                     </button> &nbsp;
@@ -132,7 +131,7 @@
                             <div class="form-group">
                                 <label class="form-control-label" for="text-input"><strong>Tipo documento</strong></label>
                                 <select v-model="tipo_documento" class="form-control">
-                                            <option value="" disabled>Selecciona una tipo de documento</option>
+                                            <option value="">Selecciona una tipo de documento</option>
                                             <option value="1">CI - CEDULA DE IDENTIDAD</option>
                                             <option value="2">CEX - CEDULA DE IDENTIDAD DE EXTRANJERO</option>
                                             <option value="5">NIT - NÚMERO DE IDENTIFICACIÓN TRIBUTARIA</option>
@@ -731,7 +730,7 @@ export default {
             this.modal = 0;
             this.tituloModal = '';
             this.nombre = '';
-            this.tipo_documento = 'DNI';
+            this.tipo_documento = '';
             this.num_documento = '';
             this.direccion = '';
             this.telefono = '';
@@ -757,7 +756,7 @@ export default {
                                     this.modal = 1;
                                     this.tituloModal = 'Registrar Usuario';
                                     this.nombre = '';
-                                    this.tipo_documento = 'DNI';
+                                    this.tipo_documento = '';
                                     this.num_documento = '';
                                     this.direccion = '';
                                     this.telefono = '';

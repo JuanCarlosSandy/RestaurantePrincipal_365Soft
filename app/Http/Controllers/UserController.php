@@ -110,75 +110,63 @@ class UserController extends Controller
     }
 
     public function update(Request $request)
-    {
-        if (!$request->ajax()) return redirect('/'); 
+{
+    if (!$request->ajax()) return redirect('/'); 
 
-        try{
-            DB::beginTransaction();
+    try {
+        DB::beginTransaction();
 
-            $user = User::findOrFail($request->id);
-            $persona = Persona::findOrFail($user->id);
-            $persona->nombre = $request->nombre;
-            $persona->tipo_documento = $request->tipo_documento;
-            $persona->num_documento = $request->num_documento;
-            $persona->direccion = $request->direccion;
-            $persona->telefono = $request->telefono;
-            $persona->email = $request->email;
+        $user = User::findOrFail($request->id);
+        $persona = Persona::findOrFail($user->id);
 
-            
-            $nombreimagen = "";
-            if($request->hasFile('fotografia'))
-            {
-                // Eliminar imagen anterior si existe
-                if($persona->fotografia != '' && Storage::exists('public/img/usuarios/' . $persona->fotografia)){
-                    Storage::delete('public/img/usuarios/' . $persona->fotografia);
-                }
+        // Convertir valores "null" o vacíos en NULL real
+        $persona->nombre = trim($request->nombre) !== "null" ? $request->nombre : null;
+        $persona->tipo_documento = trim($request->tipo_documento) !== "null" ? $request->tipo_documento : null;
+        $persona->num_documento = trim($request->num_documento) !== "null" ? $request->num_documento : null;
+        $persona->direccion = trim($request->direccion) !== "null" ? $request->direccion : null;
+        $persona->telefono = trim($request->telefono) !== "null" ? $request->telefono : null;
+        $persona->email = trim($request->email) !== "null" ? $request->email : null;
 
-                $imagen = $request->file("fotografia");
-                $nombreimagen = Str::slug($request->nombre).".".$imagen->guessExtension();
-                $imagen->storeAs('public/img/usuarios', $nombreimagen);
-
-                $ruta = public_path("img/usuarios/");
-
-                $image = Image::make($imagen);
-
-                    $width = $image->width();
-                    $height = $image->height();
-
-                if ($height > $width) {
-                    $image->fit(500, 500);
-                } else {
-                    $image->fit(500, 500);
-                }
-
-                $image->save($ruta . $nombreimagen);
-                // Copiar la imagen al directorio
-                //copy($imagen->getRealPath(), $ruta . $nombreimagen);
-
-                $persona->fotografia = $nombreimagen;
+        $nombreimagen = "";
+        if ($request->hasFile('fotografia')) {
+            // Eliminar imagen anterior si existe
+            if ($persona->fotografia && Storage::exists('public/img/usuarios/' . $persona->fotografia)) {
+                Storage::delete('public/img/usuarios/' . $persona->fotografia);
             }
 
-            $persona->save();
-            
-            $user->usuario = $request->usuario;
-            $user->password = bcrypt($request->password);
-            $user->condicion = '1';
-            
-            if($request->idrol != ''){
-                $user->idrol = $request->idrol;
-            }
+            $imagen = $request->file("fotografia");
+            $nombreimagen = Str::slug($request->nombre) . "." . $imagen->guessExtension();
+            $imagen->storeAs('public/img/usuarios', $nombreimagen);
 
-            if($request->idsucursal != ''){
-                $user->idsucursal = $request->idsucursal;
-            }
-            
-            $user->save();
+            $ruta = public_path("img/usuarios/");
+            $image = Image::make($imagen)->fit(500, 500);
+            $image->save($ruta . $nombreimagen);
 
-            DB::commit();
-        } catch (Exception $e){
-            DB::rollBack();
+            $persona->fotografia = $nombreimagen;
         }
+
+        $persona->save();
+
+        $user->usuario = trim($request->usuario) !== "null" ? $request->usuario : null;
+        $user->password = !empty($request->password) ? bcrypt($request->password) : $user->password;
+        $user->condicion = '1';
+
+        if (!empty($request->idrol)) {
+            $user->idrol = $request->idrol;
+        }
+
+        if (!empty($request->idsucursal)) {
+            $user->idsucursal = $request->idsucursal;
+        }
+
+        $user->save();
+
+        DB::commit();
+    } catch (Exception $e) {
+        DB::rollBack();
     }
+}
+
 
     public function desactivar(Request $request)
     {

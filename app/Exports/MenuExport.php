@@ -23,11 +23,12 @@ class MenuExport implements FromQuery, WithHeadings, WithMapping, WithEvents, Wi
                 'menu.nombre',
                 'categoria_menu.nombre as categoria_menu',
                 'menu.precio_venta',
-                'menu.descripcion',
+                \DB::raw('IFNULL(menu.descripcion, "sin descripción") as descripcion'), // Si descripcion es NULL, muestra "sin descripción"
                 \DB::raw('IF(menu.condicion = 1, "activo", "desactivado") as estado')
             )
             ->orderBy('menu.nombre', 'desc');
     }
+    
 
     public function headings(): array
     {

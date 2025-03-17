@@ -26,48 +26,50 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-bordered table-striped table-sm">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Opciones</th>
-                                    <th>Codigo</th>
-                                    <th>Nombre</th>
-                                    <th>Descripción</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="categoria in arrayCategoria" :key="categoria.id">
-                                    <td>
-                                        <button type="button" @click="abrirModal('categoria','actualizar',categoria)" class="btn btn-warning btn-sm">
-                                          <i class="icon-pencil"></i>
-                                        </button> &nbsp;
-                                        <template v-if="categoria.condicion">
-                                            <button type="button" class="btn btn-danger btn-sm" @click="desactivarCategoria(categoria.id)">
-                                                <i class="icon-trash"></i>
-                                            </button>
-                                        </template>
-                                        <template v-else>
-                                            <button type="button" class="btn btn-info btn-sm" @click="activarCategoria(categoria.id)">
-                                                <i class="icon-check"></i>
-                                            </button>
-                                        </template>
-                                    </td>
-                                    <td v-text="categoria.codigo"></td>
-                                    <td v-text="categoria.nombre"></td>
-                                    <td v-text="categoria.descripcion"></td>
-                                    <td>
-                                        <div v-if="categoria.condicion">
-                                            <span class="badge badge-success">Activo</span>
-                                        </div>
-                                        <div v-else>
-                                            <span class="badge badge-danger">Desactivado</span>
-                                        </div>
-                                        
-                                    </td>
-                                </tr>                                
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-sm">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Opciones</th>
+                                        <th>Codigo</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="categoria in arrayCategoria" :key="categoria.id">
+                                        <td>
+                                            <button type="button" @click="abrirModal('categoria','actualizar',categoria)" class="btn btn-warning btn-sm">
+                                                <i class="icon-pencil"></i>
+                                            </button> &nbsp;
+                                            <template v-if="categoria.condicion">
+                                                <button type="button" class="btn btn-danger btn-sm" @click="desactivarCategoria(categoria.id)">
+                                                    <i class="icon-trash"></i>
+                                                </button>
+                                            </template>
+                                            <template v-else>
+                                                <button type="button" class="btn btn-info btn-sm" @click="activarCategoria(categoria.id)">
+                                                    <i class="icon-check"></i>
+                                                </button>
+                                            </template>
+                                        </td>
+                                        <td v-text="categoria.codigo"></td>
+                                        <td v-text="categoria.nombre"></td>
+                                        <td v-text="categoria.descripcion ? categoria.descripcion : 'Sin descripción'"></td>
+                                        <td>
+                                            <div v-if="categoria.condicion">
+                                                <span class="badge badge-success">Activo</span>
+                                            </div>
+                                            <div v-else>
+                                                <span class="badge badge-danger">Desactivado</span>
+                                            </div>
+                                        </td>
+                                    </tr>                                
+                                </tbody>
+                            </table>
+                        </div>
+
                         <nav>
                             <ul class="pagination">
                                 <li class="page-item" v-if="pagination.current_page > 1">

@@ -7,7 +7,7 @@
             <!-- Ejemplo de tabla Listado -->
             <div class="card">
                 <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Almacenes
+                    <i class="fa fa-align-justify"></i> ALMACENES
                     <button type="button" @click="abrirModal('almacenes', 'registrar')" class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
                     </button>
@@ -55,7 +55,8 @@
                                     <td v-text="almacen.nombre_encargado"></td>
                                     <td v-text="almacen.telefono"></td>
                                     <td v-text="almacen.nombre_sucursal"></td>
-                                    <td v-text="almacen.observacion"></td>
+                                    <td v-text="almacen.descripcion ? almacen.descripcion : 'Sin Observaciones'"></td>
+
 
                                 </tr>
                             </tbody>
@@ -381,7 +382,7 @@ export default {
                             case 'registrar':
                                 {
                                     this.modal = 1;
-                                    this.tituloModal = 'Registrar Almacen';
+                                    this.tituloModal = 'Registrar Almacén';
                                     this.tipoAccion = 1;
                                     this.datosFormulario = {
                                         nombre_almacen: '',

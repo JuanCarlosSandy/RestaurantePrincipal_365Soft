@@ -25,6 +25,8 @@
                         </div>
                     </div>
                 </div>
+                <div class="table-responsive">
+
                 <table class="table table-bordered table-striped table-sm">
                     <thead class="thead-dark">
                         <tr>
@@ -54,7 +56,7 @@
                             </td>
                             <td v-text="categoria.codigo"></td>
                             <td v-text="categoria.nombre"></td>
-                            <td v-text="categoria.descripcion"></td>
+                            <td v-text="categoria.descripcion ? categoria.descripcion : 'Sin descripción'"></td>
                             <td>
                                 <div v-if="categoria.condicion">
                                     <span class="badge badge-success">Activo</span>
@@ -67,6 +69,8 @@
                         </tr>                                
                     </tbody>
                 </table>
+            </div>
+
                 <nav>
                     <ul class="pagination">
                         <li class="page-item" v-if="pagination.current_page > 1">

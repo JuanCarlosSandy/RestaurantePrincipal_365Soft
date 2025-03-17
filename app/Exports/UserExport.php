@@ -10,19 +10,32 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
 use Maatwebsite\Excel\Events\AfterSheet;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Illuminate\Support\Facades\DB;
+
 
 class UserExport implements FromQuery, WithHeadings, WithMapping, WithEvents, WithCustomStartCell
 {
     use Exportable;
 
     public function query()
-    {
-        return User::join('personas','users.id','=','personas.id')
-                ->join('roles','users.idrol','=','roles.id')
-                ->join('sucursales','users.idsucursal','=','sucursales.id')
-                ->select('personas.id','personas.nombre','personas.tipo_documento','personas.num_documento','personas.direccion','personas.telefono','personas.email','users.usuario','roles.nombre as rol', 'sucursales.nombre as sucursal')
-                ->orderBy('personas.id', 'desc');
-    }
+{
+    return User::join('personas','users.id','=','personas.id')
+            ->join('roles','users.idrol','=','roles.id')
+            ->join('sucursales','users.idsucursal','=','sucursales.id')
+            ->select(
+                'personas.id',
+                'personas.nombre',
+                DB::raw("COALESCE(personas.tipo_documento, 'Sin Tipo de Documento') as tipo_documento"),
+                DB::raw("COALESCE(personas.num_documento, 'Sin Número de Documento') as num_documento"),
+                DB::raw("COALESCE(personas.direccion, 'Sin Dirección') as direccion"),
+                DB::raw("COALESCE(personas.telefono, 'Sin Teléfono') as telefono"),
+                DB::raw("COALESCE(personas.email, 'Sin Email') as email"),
+                'users.usuario',
+                DB::raw("COALESCE(roles.nombre, 'Sin Rol') as rol"),
+                DB::raw("COALESCE(sucursales.nombre, 'Sin Sucursal') as sucursal")
+            )
+            ->orderBy('personas.id', 'desc');
+}
 
     public function headings(): array
     {

@@ -291,7 +291,7 @@
                                 </div>-->
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="form-control-label" for="text-input"><strong>Fotografia<span class="obligatorio">(Oblig.)</span></strong></label>
+                                        <label class="form-control-label" for="text-input"><strong>Imagen de la Bebida<span class="obligatorio">(Oblig.)</span></strong></label>
                                         <div class="input-group">
                                             
                                                 <input type="file" @change="obtenerFotografia" class="form-control"

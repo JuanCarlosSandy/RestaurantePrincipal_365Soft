@@ -14,7 +14,6 @@
             <Column field="saldoInicial" header="Saldo Inicial"></Column>
             <Column field="ventasContado" header="Ventas Efectivo"></Column>
             <Column field="ventasQR" header="Ventas QR"></Column>
-            <Column field="ventasTarjeta" header="Ventas Tarjeta"></Column>
             <Column field="depositos" header="Depositos Extras"></Column>
             <Column field="salidas" header="Salidas Extras"></Column>
             <Column field="saldototalventas" header="Saldo Total Ventas"></Column>
@@ -31,45 +30,51 @@
                 </Column>
 
                 <Column field="estado" header="Acciones">
-                    <template #body="slotProps">
-                        <template v-if = "slotProps.data.estado">
-                            <template v-if="!mostrarBotonesSecundarios">
-                                <Button type="button" @click="abrirDialogDeposito(slotProps.data.id)" class="btn btn-primary btn-sm">
-                                    <i class="icon-plus"></i>
-                                </Button> &nbsp;
+    <template #body="slotProps">
+        <template v-if="slotProps.data.estado">
+            <template v-if="!mostrarBotonesSecundarios">
+                <div class="button-group">
+                    <div class="button-column">
+                        <Button type="button" @click="abrirDialogDeposito(slotProps.data.id)" class="btn btn-primary btn-sm">
+                            <i class="icon-plus"></i>
+                        </Button> &nbsp;
+                        <Button type="button" @click="abrirDialogSalida(slotProps.data.id)" class="btn btn-danger btn-sm">
+                            <i class="icon-minus"></i>
+                        </Button> &nbsp;
+                    </div>
+                    <div class="button-column">
+                        <Button type="button" @click="abrirDialogVer(slotProps.data.id)" class="btn btn-warning btn-sm">
+                            <i class="icon-eye"></i>
+                        </Button> &nbsp;
+                        <Button type="button" @click="abrirDialogArqueo(slotProps.data.id, slotProps.data.saldoCaja)" class="btn btn-success btn-sm">
+                            <i class="icon-calculator"></i>
+                        </Button> &nbsp;
+                    </div>
+                </div>
+            </template>
+            <template v-else>
+                <div class="button-group">
+                    <div class="button-column">
+                        <Button type="button" @click="abrirModal4('cajaVer', 'ver', slotProps.data.id)" class="btn btn-warning btn-sm">
+                            <i class="icon-eye"></i>
+                        </Button> &nbsp;
+                    </div>
+                    <div class="button-column">
+                        <Button type="button" class="btn btn-danger btn-sm" @click="cerrarCaja(slotProps.data.id)">
+                            <i class="icon-lock"></i>
+                        </Button> &nbsp;
+                    </div>
+                </div>
+            </template>
+        </template>
+        <template v-else>
+            <Button type="button" @click="datosreportecaja(slotProps.data.id)" class="btn btn-danger btn-sm">
+                <i class="icon-printer"></i>
+            </Button>
+        </template>
+    </template>
+</Column>
 
-                                <Button type="button" @click="abrirDialogSalida(slotProps.data.id)" class="btn btn-danger btn-sm">
-                                    <i class="icon-minus"></i>
-                                </Button> &nbsp;
-
-                                <Button type="button" @click="abrirDialogVer(slotProps.data.id)" class="btn btn-warning btn-sm">
-                                    <i class="icon-eye"></i>
-                                </Button> &nbsp;
-
-                                <Button type="button" @click="abrirDialogArqueo(slotProps.data.id, slotProps.data.saldoCaja)" class="btn btn-success btn-sm">
-                                    <i class="icon-calculator"></i>
-                                </Button> &nbsp;
-                                            
-                            </template>
-
-                            <template v-else>
-                                <Button type="button" @click="abrirModal4('cajaVer', 'ver', slotProps.data.id)" class="btn btn-warning btn-sm">
-                                    <i class="icon-eye"></i>
-                                </Button> &nbsp;
-
-                                <Button type="button" class="btn btn-danger btn-sm" @click="cerrarCaja(slotProps.data.id)">
-                                    <i class="icon-lock"></i>
-                                </Button>
-                            </template>
-                        </template>
-                                    
-                        <template v-else>
-                            <Button type="button" @click="datosreportecaja(slotProps.data.id)" class="btn btn-danger btn-sm">
-                                <i class="icon-printer"></i>
-                            </Button>
-                        </template>
-                    </template>
-                </Column>
         </DataTable>
 
     <Dialog
@@ -1466,7 +1471,8 @@ beforeDestroy() {
     }
 }
 </script>
-<style scoped>    
+<style scoped>  
+  
 .modal-content{
 width: 100% !important;
 position: absolute !important;

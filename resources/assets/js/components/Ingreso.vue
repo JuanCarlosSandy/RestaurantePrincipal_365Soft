@@ -10,7 +10,7 @@
             <!-- Ejemplo de tabla Listado -->
             <div class="card" v-if="listado!=0">
                 <div class="card-header">
-                    <i class="fa fa-align-justify"></i> Ingresos
+                    <i class="fa fa-align-justify"></i> COMPRAS
                     <button type="button" @click="mostrarDetalle()" v-if="listado!=0" class="btn btn-secondary">
                         <i class="icon-plus"></i>&nbsp;Nuevo
                     </button>
